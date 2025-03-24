@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+'use client';
+import React, { useCallback, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -8,7 +9,6 @@ import {
   Calendar,
   dayjsLocalizer,
   Formats,
-  View as TView,
   Views,
 } from "react-big-calendar";
 import { useFormik } from "formik";
@@ -17,13 +17,11 @@ import { Calendar as DatePicker } from "react-date-range";
 import eventList, { IEvents } from "../common/data/events";
 import USERS, {
   getUserDataWithUsername,
-  IUserProps,
 } from "../common/data/userDummyData";
 import { TColor } from "../type/color-type";
 import useDarkMode from "../hooks/useDarkMode";
 import Icon from "../components/icon/Icon";
-import Avatar, { AvatarGroup } from "../components/Avatar";
-import Tooltips from "../components/bootstrap/Tooltips";
+import Avatar from "../components/Avatar";
 import {
   CalendarTodayButton,
   CalendarViewModeButtons,
@@ -70,36 +68,22 @@ import Evaluation from "../components/agenda/Evaluation";
 import Event from "../components/agenda/Event";
 import Slot from "../components/agenda/Slot";
 import Defanse from "../components/agenda/Defanse";
-import { setSlotsMod } from "../store/slices/settingsReducer";
 import { roundToNearest15 } from "../common/function/roundToNearest15";
-import { getCorrectorImageUrl } from "../common/function/getCorrectorImageUrl";
 import { useRouter } from "next/router";
 import Settings from "../components/settings";
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
+import { removeCreateSlotHandler } from "../common/function/recre_slot_handler";
+import { MyEventDay, MyEvent, MyWeekEvent, IEvent } from "../components/agenda/TemplatesEvent";
+import { customStyles } from "../common/function/customStyles";
+import { useRefreshAgenda } from "../common/function/useRefreshAgenda";
+import { setSlotsMod } from "../store/slices/settingsReducer";
 
 dayjs.extend(utc);
 dayjs.locale("fr");
 const localizer = dayjsLocalizer(dayjs);
 const now = new Date();
-
-const customStyles = `
-    .rbc-current-time-indicator {
-        background-color: red;
-        height: 2px;
-        z-index: 10;
-    }
-	.rbc-current-time-indicator::before,
-    .rbc-current-time-indicator::after {
-        content: '';
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        background-color: red;
-        border-radius: 50%;
-        top: -2px;
-    }
-    .rbc-current-time-indicator::before {left: 0;}
-    .rbc-current-time-indicator::after {right: 0;}
-`;
+const DnDCalendar = withDragAndDrop(Calendar)
 
 const customFormats = {
   firstDayOfWeek: () => 1,
@@ -109,147 +93,22 @@ const customFormats = {
     culture: string,
     localizer: any,
   ) => `${localizer.format(start, "H:mm")} - ${localizer.format(end, "H:mm")}`,
-  // dayRangeHeaderFormat: ({ start, end }) => {
-  // 	const startFormatted = dayjs(start).format('D MMMM (dddd)');
-  // 	const endFormatted = dayjs(end).format('D MMMM (dddd)');
-  // 	return `${startFormatted} - ${endFormatted}`;
-  // },
-  // Optional: Format for single day headers (e.g., day view)
   dayHeaderFormat: (date: any) => dayjs(date).format("D MMMM (dddd)"),
-  dayFormat: (date: any) => dayjs(date).format("ddd, D MMMM"), // Short weekday
-  // Alternative: Full weekday
-  // dayFormat: (date) => dayjs(date).format('D MMMM (dddd)'),
-  // Format for weekday labels if needed (e.g., "jeu")
+  dayFormat: (date: any) => dayjs(date).format("ddd, D MMMM"),
   weekdayFormat: (date: any) => dayjs(date).format("ddd"),
 } as Formats;
 
-interface IEvent extends IEvents {
-  user?: IUserProps;
-  users?: IUserProps[];
-  color?: TColor;
-}
-
-
-const MyEvent = (data: { event: IEvent }) => {
-  const { darkModeStatus } = useDarkMode();
-
-  const { event } = data;
-  return (
-    <div className="row g-2">
-      <div className="col text-truncate">
-        {event?.icon && <Icon icon={event?.icon} size="lg" className="me-2" />}
-        {event?.name}
-      </div>
-      {event?.user?.src && (
-        <div className="col-auto">
-          <div className="row g-1 align-items-baseline">
-            <div className="col-auto">
-              <Avatar src={event?.user?.src} size={18} />
-            </div>
-            <small
-              className={classNames("col-auto text-truncate", {
-                "text-dark": !darkModeStatus,
-                "text-white": darkModeStatus,
-              })}
-            >
-              {event?.user?.name}
-            </small>
-          </div>
-        </div>
-      )}
-      {event?.users && (
-        <div className="col-auto">
-          <AvatarGroup size={18}>
-            {event.users.map((user) => (
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              <Avatar key={user.src} {...user} />
-            ))}
-          </AvatarGroup>
-        </div>
-      )}
-    </div>
-  );
+const initialEventItem: IEvent = {
+  start: undefined,
+  end: undefined,
+  name: undefined,
+  id: undefined,
+  user: undefined,
 };
 
-
-const MyWeekEvent = (data: { event: IEvent }) => {
-  const { darkModeStatus } = useDarkMode();
-
-  const { event } = data;
-  return (
-    <div className="row g-2">
-      <div className="col-12 text-truncate">
-        {event?.icon && <Icon icon={event?.icon} size="lg" className="me-2" />}
-        {event?.name}
-      </div>
-      {event?.user && (
-        <div className="col-12">
-          <div className="row g-1 align-items-baseline">
-            <div className="col-auto">
-              {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-              <Avatar {...event?.user} size={18} />
-            </div>
-            <small
-              className={classNames("col-auto text-truncate", {
-                "text-dark": !darkModeStatus,
-                "text-white": darkModeStatus,
-              })}
-            >
-              {event?.user?.name}
-            </small>
-          </div>
-        </div>
-      )}
-      {event?.users && (
-        <div className="col-12">
-          <AvatarGroup size={18}>
-            {event.users.map((user) => (
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              <Avatar key={user.src} {...user} />
-            ))}
-          </AvatarGroup>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const MyEventDay = (data: { event: IEvent }) => {
-  const { event } = data;
-  return (
-    <Tooltips
-      title={`${event?.name} / ${dayjs(event.start).format("H:mm")} - ${dayjs(
-        event.end,
-      ).format("H:mm")}`}
-    >
-      <div className="row g-2">
-        {event?.user?.src && (
-          <div className="col-auto">
-            <Avatar src={event?.user?.src} size={16} />
-          </div>
-        )}
-        {event?.users && (
-          <div className="col">
-            <AvatarGroup size={16}>
-              {event.users.map((user) => (
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                <Avatar key={user.src} {...user} />
-              ))}
-            </AvatarGroup>
-          </div>
-        )}
-        <small className="col text-truncate">
-          {event?.icon && (
-            <Icon icon={event?.icon} size="lg" className="me-2" />
-          )}
-          {event?.name}
-        </small>
-      </div>
-    </Tooltips>
-  );
-};
-
-const Index: NextPage = ({ token }: any) => {
+const Index: NextPage = ({ token, me }: any) => {
+  const [loadGeneral, setLoad] = useState(true);
+  const refreshAgenda = useRefreshAgenda({ me, token, setLoad });
   const { darkModeStatus, themeStatus } = useDarkMode();
   const dispatch = useDispatch();
   const settings = useSelector((state: RootState) => state.settings.settingsLoaded);
@@ -258,41 +117,39 @@ const Index: NextPage = ({ token }: any) => {
   const slotsIntra = useSelector((state: RootState) => state.slots.slots);
   const originalSlotsIntra = useSelector((state: RootState) => state.slots.original);
   const viewMode = useSelector((state: RootState) => state.calendar.unitType);
-  const me = useSelector((state: RootState) => state.user.me);
   const scaleUsers = useSelector((state: RootState) => state.slots.scaleTeam);
   const defances = useSelector((state: RootState) => state.slots.defances);
   const defancesHistory = useSelector((state: RootState) => state.slots.defancesHistory);
+  const [eventItem, setEventItem] = useState<IEvent>(initialEventItem);
+  const [date, setDate] = useState(new Date());
+  const [toggleInfoEventCanvas, setToggleInfoEventCanvas] = useState(false);
+  const setInfoEvent = () => setToggleInfoEventCanvas(!toggleInfoEventCanvas);
+  const [eventAdding, setEventAdding] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  const [switchEvents, setSwitchEvents] = useState("my");
   const [counter, setSounter] = useState(0);
+  const [events, setEvents] = useState(eventList);
+  const [eventsActive, setEventsActive] = useState(eventList);
   const router = useRouter();
   const { notify } = router.query;
 
+  useEffect(() => {
+    refreshAgenda();
+  }, [refreshAgenda]);
+
   const clickHandler = () => {
     setSounter(counter + 1);
-    if (counter == 42) {
-      console.log("active");
+    if (counter == 3) {
       dispatch(setSlotsMod(true));
       showNotification(
         <span className="d-flex align-items-center">
           <Icon icon="Info" size="lg" className="me-1" />
-          <span>Successfully</span>
-        </span>,
-        "CATMOD est active",
-        "warning"
+          <span>🐱 Attention 🐱</span>
+        </span>, "Aide du chat activée", "info"
       );
     }
   }
-
-  // BEGIN :: Calendar
-  // Active employee
-  const [employeeList, setEmployeeList] = useState({
-    [USERS.JOHN.username]: true,
-    [USERS.ELLA.username]: true,
-    [USERS.RYAN.username]: true,
-    [USERS.GRACE.username]: true,
-  });
-  // Events
-  const [events, setEvents] = useState(eventList);
-  const [eventsActive, setEventsActive] = useState(eventList);
 
   useEffect(() => {
     if (eventsIntra && slotsIntra && defances && defancesHistory) {
@@ -311,6 +168,7 @@ const Index: NextPage = ({ token }: any) => {
         prohibition_of_cancellation: event.prohibition_of_cancellation,
         themes: event.themes,
         scale_team: "event",
+        isDraggable: false,
       }));
       const slotsList = slotsIntra.map((slot: any) => {
         return ({
@@ -337,6 +195,7 @@ const Index: NextPage = ({ token }: any) => {
           themes: "event.themes",
           scale_team: slot.scale_team,
           slots_data: slot?.slots_data,
+          isDraggable: dayjs(new Date()).isBefore(slot["end_at"]) && (slot.scale_team != "invisible")
         })
       });
 
@@ -359,30 +218,14 @@ const Index: NextPage = ({ token }: any) => {
         themes: "event.themes",
         scale_team: slot,
         slots_data: null,
-        type: "defances"
+        type: "defances",
+        isDraggable: false
       }));
 
       setEvents([...eventList, ...slotsList, ...defancesList]);
       setEventsActive([...eventList, ...slotsList, ...defancesList]);
     }
   }, [eventsIntra, slotsIntra, defances, defancesHistory]);
-
-  const initialEventItem: IEvent = {
-    start: undefined,
-    end: undefined,
-    name: undefined,
-    id: undefined,
-    user: undefined,
-  };
-
-  const [eventItem, setEventItem] = useState<IEvent>(initialEventItem);
-  const [date, setDate] = useState(new Date());
-  const [toggleInfoEventCanvas, setToggleInfoEventCanvas] = useState(false);
-  const setInfoEvent = () => setToggleInfoEventCanvas(!toggleInfoEventCanvas);
-  const [eventAdding, setEventAdding] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-  const [switchEvents, setSwitchEvents] = useState("my");
 
   useEffect(() => {
     let isMounted = true; // To prevent state updates after unmount
@@ -451,7 +294,7 @@ const Index: NextPage = ({ token }: any) => {
 
   useEffect(() => {
     if (events && notify) {
-      const isEvent = events.filter(i => (i.id == notify))[0];
+      const isEvent = events.filter((i: any) => (i.id == notify))[0];
       console.log("isEvent", isEvent);
       if (isEvent?.id) {
         setEventItem(isEvent);
@@ -532,7 +375,6 @@ const Index: NextPage = ({ token }: any) => {
         console.error('Refresh failed:', error);
         location?.reload();
       }
-
       setRefresh(false);
       await delay(3000);
     };
@@ -547,32 +389,9 @@ const Index: NextPage = ({ token }: any) => {
     const endFormated = dayjs(end).add(-1, "h").format();
     const diffInMinutes = dayjs(endFormated).diff(dayjs(startFormated), 'minute');
 
-    if (diffInMinutes <= 30 || diffInMinutes > 480) {
+    if (diffInMinutes < 60 || diffInMinutes > 480) {
       return null;
     }
-
-    // const eventStart = new Date(start);
-    // const eventEnd = new Date(start);
-    // const reminderTime = new Date(start - 60 * 60 * 1000); // 60 minutes before
-
-    // const response = await fetch("/api/events", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     name: "Event test",
-    //     eventStart: eventStart.toISOString(),
-    //     eventEnd: eventEnd.toISOString(),
-    //     // reminderTime: reminderTime.toISOString(),
-    //     chatId: "1150194983228412055",
-    //   }),
-    // });
-
-    // if (response.ok) {
-    //   console.log("Event created and reminder scheduled!");
-
-    // } else {
-    //   console.log("Error creating event.");
-    // }
 
     const res = await fetch(
       "/api/make_slot?id=" +
@@ -642,6 +461,8 @@ const Index: NextPage = ({ token }: any) => {
         [`bg-l${darkModeStatus ? "o25" : "10"}-${color} text-${color}`]: color,
         "border border-success": isActiveEvent,
         "opacity-50": isPastEvent,
+        "isDraggable": event.isDraggable && !isPastEvent,
+        "nonDraggable": !event.isDraggable || isPastEvent,
       }),
     };
   };
@@ -708,10 +529,6 @@ const Index: NextPage = ({ token }: any) => {
   }, [slotsIntra, token, dispatch]);
 
   useEffect(() => {
-    console.log('Date updated:', date);
-  }, [date]);
-
-  useEffect(() => {
     if (eventItem)
       formik.setValues({
         ...formik.values,
@@ -727,6 +544,69 @@ const Index: NextPage = ({ token }: any) => {
   }, [eventItem]);
   // END:: Calendar
 
+  // BEGIN :: Calendar
+  // Active employee
+  const [employeeList, setEmployeeList] = useState({
+    [USERS.JOHN.username]: true,
+    [USERS.ELLA.username]: true,
+    [USERS.RYAN.username]: true,
+    [USERS.GRACE.username]: true,
+  });
+
+  const moveEvent = useCallback(
+    async ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }: any) => {
+      const startFormated = dayjs(start).add(-1, "h").format();
+      const endFormated = dayjs(end).add(-1, "h").format();
+      const diffInMinutes = dayjs(endFormated).diff(dayjs(startFormated), 'minute');
+      const deletedSlotsIds = event.slots_data.map((slot: any) => slot.id);
+      if (diffInMinutes < 60)
+        return;
+      setLoad(true);
+      const res = await removeCreateSlotHandler(deletedSlotsIds, token, start, end, me.id);
+      console.log("res", res);
+
+      if (res.length >= 4) {
+        const filtredSlots = originalSlotsIntra.filter((slot: any) => !deletedSlotsIds.includes(slot.id));
+        const combined = [...res, ...filtredSlots];
+        dispatch(setOriginalSlots(combined));
+        dispatch(setSlots(preparationSlots(combined)));
+      }
+      setLoad(false);
+
+      // if (res.ok) {
+      //   showNotification(
+      //     <span className='d-flex align-items-center'>
+      //       <Icon
+      //         icon='Info'
+      //         size='lg'
+      //         className='me-1'
+      //       />
+      //       <span>Updated Successfully</span>
+      //     </span>,
+      //     'Slot has been created',
+      //     'success'
+      //   );
+      //   const combined = [...slotJson, ...slotsIntra];
+      //   dispatch(setOriginalSlots(combined));
+      //   dispatch(setSlots(preparationSlots(combined)));
+      // } else {
+      //   showNotification(
+      //     <span className='d-flex align-items-center'>
+      //       <Icon
+      //         icon='Error'
+      //         size='lg'
+      //         className='me-1'
+      //       />
+      //       <span>Error</span>
+      //     </span>,
+      //     slotJson.message,
+      //     'danger'
+      //   );
+      // }
+    },
+    [me, originalSlotsIntra, slotsIntra] // setMyEvents
+  )
+
   return (
     <PageWrapper>
       <Head>
@@ -741,14 +621,41 @@ const Index: NextPage = ({ token }: any) => {
       <Page container="fluid">
         <div className="stories">
           <div className="row mb-4 g-3">
-            {(loading || !scaleUsers || scaleUsers.length === 0) ? (
-
-              Object.keys(USERS).slice(0, 1).map((u) => (
+            {(loading || error) ? (
+              Object.keys(USERS).slice(0, 6).map((u) => (
                 <div key={USERS[u].username} className="col-auto">
+
+                  <div className="position-relative" style={{ filter: "blur(5px)" }}>
+                    <Avatar
+                      src={USERS[u].src}
+                      color={USERS[u].color}
+                      size={64}
+                      className="cursor-pointer"
+                      borderColor={
+                        employeeList[USERS[u].username] ? "info" : themeStatus
+                      }
+                      onClick={() =>
+                        setEmployeeList({
+                          ...employeeList,
+                          [USERS[u].username]: !employeeList[USERS[u].username],
+                        })
+                      }
+                    />
+                    {!!events.filter(
+                      (i) =>
+                        i.user?.username === USERS[u].username &&
+                        i.start &&
+                        i.start < now &&
+                        i.end &&
+                        i.end > now,
+                    ).length && (
+                        <span className="position-absolute top-85 start-85 translate-middle badge border border-2 border-light rounded-circle bg-success p-2">
+                          <span className="visually-hidden">Online user</span>
+                        </span>
+                      )}
+                  </div>
                 </div>
               ))
-            ) : error ? (
-              <div className="text-danger">{error}</div>
             ) : (
               [...scaleUsers].slice(0, 6).reverse().map((u: any) => (
                 <div key={u.login} className="col-auto">
@@ -782,8 +689,6 @@ const Index: NextPage = ({ token }: any) => {
             }
 
           </div>
-
-
           <div className="message_exam mb-4">
             <Icon icon="Info" color="danger" className="me-2" size="2x" />
             <p>Attention ! L'agenda ne prend pas en compte <strong>les examens</strong>.
@@ -798,30 +703,35 @@ const Index: NextPage = ({ token }: any) => {
                 borderRadius: '50%',
                 transition: 'transform 0.3s ease-in-out'
               }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(2)'}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.3)'}
               onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             />
           </div>
         </div>
-        <div className="row h-100">
+        <div className="row h-100" style={{
+          filter: loadGeneral ? "blur(5px)" : "blur(0px)",
+          pointerEvents: loadGeneral ? "none" : "auto",
+          transition: "filter .5s ease-in-out",
+        }}>
 
           <div className="col-xl-3 small_agenda">
             <Card stretch style={{ minHeight: 600 }}>
               <CardHeader>
                 <CardLabel icon="Today" iconColor="info">
                   <CardTitle>
-                    {dayjs(date).format("dddd, D MMMM YYYY")}
+                    {dayjs(date).format("dddd, D MMMM")}
                   </CardTitle>
                   <CardSubTitle>{dayjs(date).fromNow()}</CardSubTitle>
                 </CardLabel>
-                {/* <CardActions>
+                <CardActions>
                   <CalendarTodayButton
                     unitType={Views.DAY}
                     date={date}
                     setDate={setDate}
                     viewMode={Views.DAY}
+                    central={false}
                   />
-                </CardActions> */}
+                </CardActions>
               </CardHeader>
               <CardBody isScrollable>
                 <Calendar
@@ -864,7 +774,7 @@ const Index: NextPage = ({ token }: any) => {
                     viewMode={viewMode}
                   />
                 </CardActions>
-                {/* <Popovers
+                <Popovers
                   desc={
                     <DatePicker
                       onChange={(item) => setDate(item)}
@@ -877,7 +787,7 @@ const Index: NextPage = ({ token }: any) => {
                   trigger="click"
                 >
                   <Button color="light">{calendarDateLabel}</Button>
-                </Popovers> */}
+                </Popovers>
                 <div className="switch_events">
                   <Button
                     disabled={refresh || !scaleUsers}
@@ -897,7 +807,7 @@ const Index: NextPage = ({ token }: any) => {
                 {
                   (refresh || !scaleUsers)
                     ?
-                    <div className="spinner"> <Spinner color={'info'} inButton /></div>
+                    <div className="spinner"> <Spinner random inButton /></div>
                     :
                     <Button icon='Refresh' color='storybook' onClick={refreshHandler}>
                       Refresh
@@ -910,7 +820,7 @@ const Index: NextPage = ({ token }: any) => {
               </CardHeader>
               <CardBody isScrollable>
                 <style>{customStyles}</style>
-                <Calendar
+                <DnDCalendar
                   formats={customFormats}
                   selectable
                   toolbar={false}
@@ -924,13 +834,14 @@ const Index: NextPage = ({ token }: any) => {
                   onNavigate={(_date) => setDate(_date)}
                   scrollToTime={dayjs().add(-1, 'h').toISOString()}
                   defaultDate={new Date()}
+                  onEventDrop={moveEvent}
+                  onEventResize={moveEvent}
+                  draggableAccessor="isDraggable"
                   onSelectEvent={(event) => {
                     setInfoEvent();
                     setEventItem(event);
                   }}
                   onSelectSlot={handleSelect}
-                  // onView={handleViewMode}
-                  // onDrillDown={handleViewMode}
                   components={{
                     event: MyEvent,
                     week: {

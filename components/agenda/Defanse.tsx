@@ -34,7 +34,7 @@ const Defanse = ({ eventItem, scaleUsers, me, token }: any) => {
                 <Card className="mb-0 bg-l10-success" shadow="sm">
 
                     {
-                        userData && <CardHeader className="bg-l25-success">
+                        userData && <CardHeader className="bg-l25-success colomn_rest">
                             <CardLabel iconColor="dark">
                                 <CardTitle>
                                     {userData.usual_full_name || "^^"}
@@ -110,7 +110,7 @@ const Defanse = ({ eventItem, scaleUsers, me, token }: any) => {
                                 style={{ textAlign: "end" }}
                             >
                                 {userData && eventItem?.scale_team?.correcteds.map((profile, i) => (
-                                    <CardHeader className="bg-l25-info">
+                                    <CardHeader className="bg-l25-info colomn_rest">
                                         <Avatar
                                             src={profile.id == me.id ? getCorrectorImageUrl(profile.id, scaleUsers, me) : "https://cdn.intra.42.fr/users/430b2acd1bcfedf5475654d235003086/norminet.jpeg"}
                                             size={64}

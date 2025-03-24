@@ -28,10 +28,17 @@ interface ISpinnerProps {
 	size?: string | number | null;
 	inButton?: boolean | 'onlyIcon';
 	className?: string;
+	random?: boolean;
 }
 const Spinner = forwardRef<HTMLDivElement, ISpinnerProps>(
-	({ tag, color, isGrow, isSmall, size, children, inButton, className, ...props }, ref) => {
+	({ tag, color, isGrow, isSmall, size, children, inButton, className, random, ...props }, ref) => {
 		const { mounted } = useMounted();
+		const colors: TColor[] = ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark'];
+
+		const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+		if (random)
+			color = randomColor;
 
 		// @ts-ignore
 		const classes = useStyles({ size });
@@ -84,6 +91,7 @@ Spinner.propTypes = {
 	// @ts-ignore
 	inButton: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['onlyIcon'])]),
 	className: PropTypes.string,
+	random: PropTypes.bool,
 };
 Spinner.defaultProps = {
 	children: 'Loading...',
@@ -94,6 +102,7 @@ Spinner.defaultProps = {
 	size: null,
 	inButton: false,
 	className: undefined,
+	random: false,
 };
 
 export default Spinner;

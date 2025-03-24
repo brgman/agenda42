@@ -120,7 +120,7 @@ const Popovers: FC<IPopoversProps> = ({
 	};
 
 	return (
-		<div ref={dropdownRef}>
+		<div>
 			{cloneElement(
 				typeof children === 'string' ? (
 					// eslint-disable-next-line react/jsx-props-no-spreading

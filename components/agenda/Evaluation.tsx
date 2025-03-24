@@ -21,7 +21,7 @@ const Evaluation = ({ eventItem, scaleUsers, me, token }: any) => {
                             shadow="sm"
                             style={{ textAlign: "end" }}
                         >
-                            <CardHeader className="bg-l25-info">
+                            <CardHeader className="bg-l25-info colomn_rest">
                                 <Avatar
                                     src={getCorrectorImageUrl(eventItem?.scale_team?.corrector.id, scaleUsers, me)}
                                     size={64}

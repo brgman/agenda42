@@ -71,12 +71,14 @@ interface ICalendarTodayButtonProps {
   date: object;
   unitType: string;
   viewMode: "month" | "week" | "work_week" | "day" | "agenda";
+  central: boolean;
 }
 export const CalendarTodayButton: FC<ICalendarTodayButtonProps> = ({
   setDate,
   date,
   unitType,
   viewMode,
+  central = true
 }) => {
   return (
     <ButtonGroup>
@@ -89,12 +91,12 @@ export const CalendarTodayButton: FC<ICalendarTodayButtonProps> = ({
         aria-label="Prev"
       />
       {/* @ts-ignore */}
-      <Button color="info" isLight
+      {central ? <Button color="info" isLight
         disabled={dayjs(date).isSame(dayjs(), 'day')}
         onClick={() => setDate(dayjs(new Date()).toDate())}
       >
         Today
-      </Button>
+      </Button> : null}
       <Button
         color="info"
         isLight

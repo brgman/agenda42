@@ -1,74 +1,105 @@
-import axios from "axios";
-// import NodeCache from "node-cache";
+import axios, { AxiosError } from 'axios';
 
-// const cache = new NodeCache({ stdTTL: 300 }); // 5-min cache
+// Constants
+const BASE_URL = 'https://api.intra.42.fr/v2';
+const RETRY_CONFIG = {
+    maxRetries: 3,
+    baseDelayMs: 1000,
+    maxDelayMs: 10000,
+} as const;
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// Types
+interface ApiResponse<T> {
+    data: T;
+    status: number;
+}
 
-const fetchWithRetry = async (url: string, options: RequestInit, retries = 3) => {
-    for (let i = 0; i < retries; i++) {
-        const response = await fetch(url, options);
-        if (response.status === 429) {
-            const retryAfter = response.headers.get('Retry-After');
-            const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 1000 * Math.pow(2, i);
-            console.log(`Rate limited. Retrying in ${waitTime}ms...`);
-            await delay(waitTime);
-            continue;
-        }
-        if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-        return response;
-    }
-    throw new Error('Max retries exceeded');
+interface CookieObject {
+    [key: string]: string;
+}
+
+// Utility Functions
+const parseCookies = (cookieString: string): CookieObject =>
+    Object.fromEntries(cookieString.split('; ').map(c => c.split('=')));
+
+const getBackoffDelay = (attempt: number, retryAfter?: string): number => {
+    if (retryAfter) return Math.min(parseInt(retryAfter) * 1000, RETRY_CONFIG.maxDelayMs);
+    const exponential = RETRY_CONFIG.baseDelayMs * Math.pow(2, attempt);
+    return Math.min(exponential + Math.random() * 100, RETRY_CONFIG.maxDelayMs);
 };
 
+const createApiClient = (token: string) => {
+    const instance = axios.create({
+        baseURL: BASE_URL,
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Accept': 'application/json',
+        },
+        timeout: 5000,
+    });
+
+    instance.interceptors.response.use(
+        response => response,
+        async (error) => {
+            const config = error.config;
+            if (!config || error.response?.status !== 429 || config._retryCount >= RETRY_CONFIG.maxRetries) {
+                return Promise.reject(error);
+            }
+
+            config._retryCount = (config._retryCount || 0) + 1;
+            const delayMs = getBackoffDelay(config._retryCount, error.response?.headers['retry-after']);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            return instance(config);
+        }
+    );
+
+    return instance;
+};
+
+// Main Handler
 export default async function handler(req: any, res: any) {
     try {
         const { id } = req.query;
-        const cookies = req.headers.cookie || "";
-        const cookieObj = Object.fromEntries(cookies.split("; ").map((c: string) => c.split("=")));
-        const token = cookieObj["token"];
+        const cookies = parseCookies(req.headers.cookie || '');
+        const token = cookies.token;
 
-        if (!token) return res.status(401).json({ message: "No token" });
+        if (!token) {
+            return res.status(401).json({ error: 'Authentication token required' });
+        }
 
-        // const cacheKey = `user_data_${id}`;
-        // const cached = cache.get(cacheKey);
-        // if (cached) return res.status(200).json(cached);
+        const api = createApiClient(token);
 
-        const [evaluationsRes, slotsRes, eventsRes, userRes] = await Promise.all([
-            fetchWithRetry('https://api.intra.42.fr/v2/me/scale_teams', {
-                headers: { Authorization: `Bearer ${token}` }
-            }),
-            fetchWithRetry('https://api.intra.42.fr/v2/me/slots', {
-                headers: { Authorization: `Bearer ${token}` }
-            }),
-            fetchWithRetry(`https://api.intra.42.fr/v2/users/${id}/events?sort=-begin_at`, {
-                headers: { Authorization: `Bearer ${token}` }
-            }),
-            axios.get(`https://api.intra.42.fr/v2/users/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-        ]);
-
-        const [evaluationsJson, slotsJson, eventsJson] = await Promise.all([
-            evaluationsRes.json(),
-            slotsRes.json(),
-            eventsRes.json()
-        ]);
-
-        const responseData = {
-            user: userRes.data,
-            evaluations: evaluationsJson,
-            slots: slotsJson,
-            events: eventsJson,
-            cookies: cookieObj
+        // API endpoints and their transformations
+        const requests = {
+            evaluations: () => api.get('/me/scale_teams'),
+            events: () => api.get(`/users/${id}/events`, { params: { sort: '-begin_at' } }),
+            slots: () => api.get('/me/slots', { params: { 'page[size]': '100' } }),
+            defancesHistory: () => api.get(`/users/${id}/scale_teams/as_corrected`),
+            defances: () => api.get(`/me/scale_teams`, { params: { 'filter[future]': 'false' } }),
         };
 
-        res.status(200).json(responseData);
+        // Execute all requests concurrently
+        const results = await Promise.all(
+            Object.entries(requests).map(async ([key, request]) => {
+                const response = await request();
+                return [key, response.data];
+            })
+        );
 
-    } catch (error: any) {
-        console.error('Error in handler:', error);
-        res.status(error.response?.status || 500).json({
-            message: error.message || 'Internal server error'
-        });
+        // Transform results into response object
+        const responseData = Object.fromEntries([
+            ...results,
+            ['cookies', cookies]
+        ]);
+
+        return res.status(200).json(responseData);
+
+    } catch (error) {
+        const err = error as Error | AxiosError;
+        const status = err instanceof AxiosError ? (err.response?.status || 500) : 500;
+        const message = err instanceof AxiosError ? (err.response?.data?.message || err.message) : 'Internal server error';
+
+        console.error('API Error:', { message, status, stack: err.stack });
+        return res.status(status).json({ error: message });
     }
 }

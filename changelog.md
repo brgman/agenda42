@@ -1,3 +1,8 @@
+# 2.0.0
+- Refactoring SSR with replase fetch in the front
+- Added function for resize and replase slots
+- Style fixes
+
 # 1.7.0
 - Added fix for redirection after autentification
 - Added component for Event

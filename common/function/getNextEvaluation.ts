@@ -38,7 +38,8 @@ async function createEvaluations(nextEvaluations: EvaluationData[], chat_id: any
     }
 }
 
-export const getNextEvaluation = (evals: any, chat_id: any) => {
+export const getNextEvaluation = (evals: any, chat_id: any, events: any) => {
+    // TODO: add events for notifications with other message for Discord 
     const nextEvaluations = evals.filter((i: any) => {
         if (new Date(i.begin_at) < new Date())
             return (false);
