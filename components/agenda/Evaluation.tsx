@@ -6,12 +6,13 @@ import Card, { CardHeader, CardLabel, CardTitle, CardBody } from "../bootstrap/C
 import Progress from "../bootstrap/Progress";
 import { getCorrectorImageUrl, getCorrectorName, getLevel, getRentre } from "../../common/function/getCorrectorImageUrl";
 import { CorrectorLocation } from "./CorrectorLocation";
+import { CorrectorLanguages } from "./CorrectorLanguages";
 import Badge from "../bootstrap/Badge";
+import { useEffect } from "react";
 
 const Evaluation = ({ eventItem, scaleUsers, me, token }: any) => {
     return (
         <div>
-            {console.log("Evaluation", eventItem)}
             <h2>Evaluation of the project</h2>
             <br />
             <div className="col-12">
@@ -92,6 +93,7 @@ const Evaluation = ({ eventItem, scaleUsers, me, token }: any) => {
                                         <Badge color='info'>
                                             {getLevel(profile.id, scaleUsers)}
                                         </Badge>
+                                        <CorrectorLanguages id={profile.id} token={token} user={null} />
                                     </p>
                                     <p style={{ marginTop: 5 }}>
                                         {i == 0 ? dayjs(eventItem?.scale_team.updated_at).format(
