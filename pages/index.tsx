@@ -286,7 +286,7 @@ const Index: NextPage = ({ token, me }: any) => {
       ].filter((item, index, self) =>
         index === self.findIndex(t => t.id === item.id)
       ));
-      dispatch(setUnitType(Views.AGENDA));
+      dispatch(setUnitType(Views.WORK_WEEK));
     }
     else {
       setEventsActive([
@@ -391,8 +391,8 @@ const Index: NextPage = ({ token, me }: any) => {
 
   const handleSelect = async ({ start, end }: { start: any; end: any }) => {
     console.log("handleSelect")
-    const startFormated = dayjs(start).add(-1, "h").format();
-    const endFormated = dayjs(end).add(-1, "h").format();
+    const startFormated = dayjs(start).add(-2, "h").format();
+    const endFormated = dayjs(end).add(-2, "h").format();
     const diffInMinutes = dayjs(endFormated).diff(dayjs(startFormated), 'minute');
 
     if (diffInMinutes < 60 || diffInMinutes > 480) {
@@ -559,10 +559,13 @@ const Index: NextPage = ({ token, me }: any) => {
     [USERS.GRACE.username]: true,
   });
 
+  const todayAt9AM = dayjs().set('hour', 7).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+  const todayAt0AM = dayjs().set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
+  
   const moveEvent = useCallback(
     async ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }: any) => {
-      const startFormated = dayjs(start).add(-1, "h").format();
-      const endFormated = dayjs(end).add(-1, "h").format();
+      const startFormated = dayjs(start).add(-2, "h").format();
+      const endFormated = dayjs(end).add(-2, "h").format();
       const diffInMinutes = dayjs(endFormated).diff(dayjs(startFormated), 'minute');
       const deletedSlotsIds = event.slots_data.map((slot: any) => slot.id);
       if (diffInMinutes < 60)
@@ -734,7 +737,7 @@ const Index: NextPage = ({ token, me }: any) => {
                   date={date}
                   step={15}
                   min={roundToNearest15(date)}
-                  // scrollToTime={dayjs(date).add(-2, 'h').toISOString()}
+                  scrollToTime={dayjs(date).add(-1, 'h').toISOString()}
                   defaultDate={new Date()}
                   onSelectEvent={(event) => {
                     setInfoEvent();
@@ -818,7 +821,8 @@ const Index: NextPage = ({ token, me }: any) => {
                   views={views}
                   view={viewMode}
                   date={date}
-                  step={15}
+                  step={60}
+                  min={viewMode == Views.WORK_WEEK ? todayAt9AM : todayAt0AM}
                   onNavigate={(_date) => setDate(_date)}
                   scrollToTime={dayjs().add(-1, 'h').toISOString()}
                   defaultDate={new Date()}

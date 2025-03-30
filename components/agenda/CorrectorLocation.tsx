@@ -11,9 +11,9 @@ export const CorrectorLocation = ({ id, token = null, user = null }: { id: any; 
     useEffect(() => {
         const fetchData = async () => {
             const data = await fetchUserWithRetry(id, 3, token, false);
-            console.log(data)
+            console.log("fetchData", data)
             setUserData(data);
-            dispatch(updateUser({ id: data.id, cursus_users: data?.cursus_users }));
+            dispatch(updateUser({ id: data.id, cursus_users: data?.cursus_users, languages: data?.languages_users }));
         };
         if (!user)
             fetchData();

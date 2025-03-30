@@ -93,7 +93,7 @@ const Evaluation = ({ eventItem, scaleUsers, me, token }: any) => {
                                         <Badge color='info'>
                                             {getLevel(profile.id, scaleUsers)}
                                         </Badge>
-                                        <CorrectorLanguages id={profile.id} token={token} user={null} />
+                                        <CorrectorLanguages id={profile.id} users={scaleUsers} />
                                     </p>
                                     <p style={{ marginTop: 5 }}>
                                         {i == 0 ? dayjs(eventItem?.scale_team.updated_at).format(
@@ -134,7 +134,6 @@ const Evaluation = ({ eventItem, scaleUsers, me, token }: any) => {
                     }
                 </Card>
             </div>
-
         </div>
     );
 };

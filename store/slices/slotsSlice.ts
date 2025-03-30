@@ -53,6 +53,7 @@ const slotsSlice = createSlice({
             const { grade, level } = cursusUser;
             const user = state.scaleTeam.find((u) => u.id === action.payload.id);
 
+            user.languages = action.payload.languages;
             if (user) {
                 user.grade = grade;
                 user.level = level;

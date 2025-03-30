@@ -1,3 +1,7 @@
+# 2.4.0
+- Added flags for languages in the modal of evaluation
+- Changed dafault view for All events
+ 
 # 2.3.3
 - Changed view default for all events
 - Fix bug with 2 events if futur eval is exist

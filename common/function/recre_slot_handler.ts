@@ -68,8 +68,8 @@ const createSlot = async (token: any, end: any, start: any, meId: any) => {
 }
 
 export const removeCreateSlotHandler = async (events: any, token: any, start: any, end: any, meId: any) => {
-    const startFormated = dayjs(start).add(-1, "h").format();
-    const endFormated = dayjs(end).add(-1, "h").format();
+    const startFormated = dayjs(start).add(-2, "h").format();
+    const endFormated = dayjs(end).add(-2, "h").format();
     const removeRes = await removeSlotsHandler(events, token);
     if (removeRes === events.length) {
         console.log("removeRes", removeRes, events.length)
