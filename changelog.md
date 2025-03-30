@@ -1,6 +1,7 @@
 # 2.4.0
 - Added flags for languages in the modal of evaluation
 - Changed dafault view for All events
+- Fixed change time for France: summer times
  
 # 2.3.3
 - Changed view default for all events
