@@ -80,23 +80,14 @@ const Index: NextPage = ({ token, me }: any) => {
   const [eventAdding, setEventAdding] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-  const [switchEvents, setSwitchEvents] = useState("my");
   const [events, setEvents] = useState([]);
   const [eventsActive, setEventsActive] = useState([]);
   const router = useRouter();
   const { notify } = router.query;
 
-  useEffect(() => {
-    refreshAgenda();
-    const update = setInterval(() => {
-      refreshAgenda();
-    }, 60000 * 15);
-    return () => clearInterval(update);
-  }, [refreshAgenda]);
-
-  useParsingEvents(eventsIntra, slotsIntra, defances, defancesHistory, me, setEvents, setEventsActive, setSwitchEvents);
-  useFetchAllEvents(switchEvents, allEvents, token, me, setAllEvents);
-  useSwitchEvents(events, allEvents, switchEvents, setEventsActive);
+  useParsingEvents(eventsIntra, slotsIntra, defances, defancesHistory, me, setEvents, setEventsActive);
+  useFetchAllEvents(allEvents, token, me, setAllEvents);
+  useSwitchEvents(events, allEvents, setEventsActive);
   useNotification(events, notify, settings, setEventItem, setToggleInfoEventCanvas);
 
   // Calendar Unit Type
@@ -141,7 +132,7 @@ const Index: NextPage = ({ token, me }: any) => {
                 icon='Info'
                 size='lg'
                 className='me-1'
-              />
+                />
               <span>Updated Successfully</span>
             </span>,
             'Agenda update',
@@ -166,13 +157,19 @@ const Index: NextPage = ({ token, me }: any) => {
         location?.reload();
       }
       setRefresh(false);
-      // setSwitchEvents("my");
       await delay(3000);
     };
 
     await attemptRefresh();
   };
 
+  useEffect(() => {
+    refreshAgenda();
+    const update = setInterval(() => {
+      refreshHandler();
+    }, 60000 * 15);
+    return () => clearInterval(update);
+  }, [refreshAgenda]);
 
   const handleSelect = async ({ start, end }: { start: any; end: any }) => {
     console.log("handleSelect")
@@ -216,8 +213,6 @@ const Index: NextPage = ({ token, me }: any) => {
       const combined = [...slotJson, ...slotsIntra];
       dispatch(setOriginalSlots(combined));
       dispatch(setSlots(preparationSlots(combined)));
-      // setSwitchEvents("my");
-      setSwitchEvents("all");
     } else {
       showNotification(
         <span className='d-flex align-items-center'>
@@ -402,8 +397,6 @@ const Index: NextPage = ({ token, me }: any) => {
               viewMode={viewMode}
               refresh={refresh}
               scaleUsers={scaleUsers}
-              setSwitchEvents={setSwitchEvents}
-              switchEvents={switchEvents}
               refreshHandler={refreshHandler}
               eventsActive={eventsActive}
               views={views}

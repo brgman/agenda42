@@ -24,6 +24,9 @@ import dayjs from "dayjs";
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import ThemeContext from "../../context/themeContext";
 import { useContext } from "react";
+import { RootState } from "../../store";
+import { useDispatch, useSelector } from "react-redux";
+import { setSwitchEvents } from "../../store/slices/calendarSlice";
 
 const MasterCalendar = ({
     unitType,
@@ -32,8 +35,6 @@ const MasterCalendar = ({
     viewMode,
     refresh,
     scaleUsers,
-    setSwitchEvents,
-    switchEvents,
     refreshHandler,
     eventsActive,
     views,
@@ -43,7 +44,10 @@ const MasterCalendar = ({
     handleSelect,
     eventStyleGetter,
 }: any) => {
-    const { mobileDesign } = useContext(ThemeContext);
+    const dispatch = useDispatch();
+    const { mobileDesign, darkModeStatus } = useContext(ThemeContext);
+    const switchEvents = useSelector((state: RootState) => state.calendar.focusing);
+
     const todayAt9AM = dayjs().set('hour', 7).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
     const todayAt0AM = dayjs().set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
 
@@ -52,9 +56,21 @@ const MasterCalendar = ({
 
     const calendarDateLabel = getLabel(date, viewMode);
 
+    const slotPropGetter = (date: string) => {
+        if (dayjs(date).isBefore(dayjs().add(30, 'm'), 'm')) {
+            return {
+                style: {
+                    backgroundColor: darkModeStatus ? '#fff' : '#999',
+                    opacity: 0.1,
+                }
+            };
+        }
+        return {};
+    }
+
     return (
         <Card stretch style={{ minHeight: 600 }} >
-            <CardHeader style={mobileDesign ? {paddingBottom: 0} : {}}>
+            <CardHeader style={mobileDesign ? { paddingBottom: 0 } : {}}>
                 <CardActions>
                     <CalendarTodayButton
                         unitType={unitType}
@@ -67,7 +83,7 @@ const MasterCalendar = ({
                 <Popovers
                     desc={
                         <DatePicker
-                            locale={fr}                        
+                            locale={fr}
                             onChange={(item) => setDate(item)}
                             date={date}
                             color="#6c5dd3"
@@ -83,14 +99,14 @@ const MasterCalendar = ({
                     <Button
                         isDisable={refresh || !scaleUsers}
                         color={switchEvents == "all" ? 'primary' : 'light'}
-                        onClick={() => setSwitchEvents("all")}
+                        onClick={() => dispatch(setSwitchEvents("all"))}
                     >
                         Agenda
                     </Button>
                     <Button
                         isDisable={refresh || !scaleUsers}
                         color={switchEvents == "my" ? 'primary' : 'light'}
-                        onClick={() => setSwitchEvents("my")}
+                        onClick={() => dispatch(setSwitchEvents("my"))}
                     >
                         Focusing
                     </Button>
@@ -110,9 +126,9 @@ const MasterCalendar = ({
                         :
                         <Button icon='Refresh' color='storybook' onClick={refreshHandler}>Update</Button>
                 }
-                
-                    <CalendarViewModeButtons viewMode={viewMode} />
-                
+
+                <CalendarViewModeButtons viewMode={viewMode} />
+
             </CardHeader>
             <CardBody isScrollable style={{ paddingTop: 0 }}>
                 <DnDCalendar
@@ -148,6 +164,7 @@ const MasterCalendar = ({
                         },
                     }}
                     eventPropGetter={eventStyleGetter}
+                    slotPropGetter={slotPropGetter}
                     style={mobileDesign ? { height: '66vh' } : {}}
                 />
                 <style>{customStyles}</style>

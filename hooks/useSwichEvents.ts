@@ -1,9 +1,12 @@
 import dayjs from "dayjs";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
-const useSwitchEvents = (events: any, allEvents: any, switchEvents: any, setEventsActive: any) => {
+const useSwitchEvents = (events: any, allEvents: any, setEventsActive: any) => {
+  const switchEvents = useSelector((state: RootState) => state.calendar.focusing);
+  
   useEffect(() => {
-    console.log("sw", switchEvents);
     if (switchEvents == 'all' && allEvents) {
       const eventList = allEvents.map((event: any) => ({
         id: event.id,
@@ -33,7 +36,7 @@ const useSwitchEvents = (events: any, allEvents: any, switchEvents: any, setEven
         ...events
       ]);
     }
-  }, [allEvents, switchEvents]);
+  }, [events, allEvents, switchEvents]);
 };
 
 export default useSwitchEvents;

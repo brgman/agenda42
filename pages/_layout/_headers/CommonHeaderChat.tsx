@@ -54,7 +54,7 @@ const CommonHeaderChat = () => {
                 <div className='me-3'>
                     <div className='text-end'>
                         <div className='fw-bold fs-6 mb-0'>
-                            {`${user?.displayname} ( ${user?.location ? user?.location : 'unavalible'} )`}
+                            {`${user?.displayname} ( ${user?.location ? user?.location : 'unavailable'} )`}
                         </div>
                         <div className='text-muted'>
                             <small>I have&nbsp; 

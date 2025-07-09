@@ -51,11 +51,11 @@ export const CorrectorLocation = ({ id, token = null, user = null }: { id: any; 
                     </Button>
                 ) : (
                     <Button
-                        disabled
+                        isDisable
                         type="submit"
                         onClick={() => { }}
                     >
-                        {userData?.id ? "Unavailable" : "Reload..."}
+                            {userData?.id ? "Unavailable" : "Reload..."}
                     </Button>
                 )
             }

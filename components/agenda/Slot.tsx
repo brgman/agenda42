@@ -184,8 +184,6 @@ const Slot = ({ eventItem, token, originalSlotsIntra }: any) => {
                         })
                     }
                 </> : null}
-
-                <p className="mt-5">The buttons is disabled if the event starts more than 1 hour ago from now.</p>
             </div>
         </>
     );

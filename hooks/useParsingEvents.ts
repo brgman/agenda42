@@ -9,7 +9,6 @@ const useParsingEvents = (
     me: any,
     setEvents: any,         // TODO: safe setSwitchEvents in the store
     setEventsActive: any,   // TODO: safe setEvents in the store
-    setSwitchEvents: any    // TODO: safe setEventsActive in the store
 ) => {
     useEffect(() => {
         if (eventsIntra && slotsIntra && defances && defancesHistory) {
@@ -85,7 +84,6 @@ const useParsingEvents = (
                 }));
             setEvents([...eventList, ...slotsList, ...defancesList]);
             setEventsActive([...eventList, ...slotsList, ...defancesList]);
-            setSwitchEvents("all");
         }
     }, [eventsIntra, slotsIntra, defances, defancesHistory]);
 };
