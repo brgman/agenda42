@@ -56,7 +56,7 @@ const MasterCalendar = ({
 
     const calendarDateLabel = getLabel(date, viewMode);
 
-    const slotPropGetter = (date: string) => {
+    const slotPropGetter = useCallback((date: string) => {
         if (dayjs(date).isBefore(dayjs().add(30, 'm'), 'm')) {
             return {
                 style: {
