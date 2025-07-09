@@ -17,7 +17,7 @@ const calendarSlice = createSlice({
         setUnitType(state, action: PayloadAction<any>) {
             state.unitType = action.payload;
         },
-        setSwitchEvents(state, action: PayloadAction<any>) {
+        setSwitchEvents(state, action: PayloadAction<'all' | 'my'>) {
             state.focusing = action.payload;
         },
     },
