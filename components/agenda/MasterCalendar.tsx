@@ -23,7 +23,7 @@ import { MyEvent, MyWeekEvent } from "../../components/agenda/TemplatesEvent";
 import dayjs from "dayjs";
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import ThemeContext from "../../context/themeContext";
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { setSwitchEvents } from "../../store/slices/calendarSlice";
@@ -66,7 +66,7 @@ const MasterCalendar = ({
             };
         }
         return {};
-    }
+    }, []);
 
     return (
         <Card stretch style={{ minHeight: 600 }} >
