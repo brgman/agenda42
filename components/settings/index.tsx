@@ -1,22 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import OffCanvas, { OffCanvasHeader, OffCanvasTitle, OffCanvasBody } from "../bootstrap/OffCanvas";
 import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { setModalStatus } from "../../store/slices/settingsReducer";
 import FormGroup from "../bootstrap/forms/FormGroup";
-// import { Badge, Input, Label } from "../icon/material-icons";
-import { setDate } from "date-fns";
 import Button from "../bootstrap/Button";
-import Checks, { ChecksGroup } from "../bootstrap/forms/Checks";
 import { useFormik } from "formik";
-import validate from "../../common/function/validation/editPagesValidate";
-import dayjs from "dayjs";
-import FormText from "../bootstrap/forms/FormText";
-import TAGS from "../../common/data/boardTagsData";
-import Card, { CardHeader, CardLabel, CardTitle, CardBody } from "../bootstrap/Card";
-import Select from "../bootstrap/forms/Select";
-import Textarea from "../bootstrap/forms/Textarea";
-import Modal, { ModalHeader, ModalTitle, ModalBody, ModalFooter } from "../bootstrap/Modal";
 import Input from "../bootstrap/forms/Input";
 import Icon from "../icon/Icon";
 import showNotification from "../extras/showNotification";
@@ -25,7 +14,6 @@ const Settings: FC<any> = ({ settingsLoaded }: any) => {
     const settingsIsOpen = useSelector((state: RootState) => state.settings.settingsIsOpen);
     const me = useSelector((state: RootState) => state.user.me);
 
-    const [eventAdding, setEventAdding] = useState(false);
     const dispatch = useDispatch();
 
     const setSettings = (status: boolean) => {
@@ -49,7 +37,7 @@ const Settings: FC<any> = ({ settingsLoaded }: any) => {
             discordId: setDiscortId(settingsLoaded),
         },
         // validate,
-        onSubmit: async (values, { resetForm }) => {
+        onSubmit: async (values) => { // (values, { resetForm })
             // TODO: save to SQLite3
             await fetch("/api/settings", {
                 method: settingsLoaded?.data?.data ? "PATCH" : "POST",
