@@ -10,7 +10,10 @@ The project is built on [**Next.js 14.0.4**](https://github.com/vercel/next.js) 
 
 ## 🌟 Guide for Contributing, via Fork 🌟
 
-Welcome to the project! We're super excited to have you here, and we can't wait to see your amazing contributions. Whether you're fixing a bug 🐛, adding a feature ✨, or improving documentation 📚, this guide will help you every step of the way. Let’s dive in! 🚀
+Welcome to the project! We're super excited to have you here, and we can't wait to see your amazing contributions. Whether you're fixing a bug 🐛, adding a feature ✨, or improving documentation 📚, this guide will help you every step of the way. Feel free to jump in and contribute! 🚀
+
+You can create [new issues](https://github.com/brgman/agenda42/issues/new)
+or pick up tasks marked with [This task is currently unassigned and open for anyone to take!](https://github.com/brgman/agenda42/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22This%20task%20is%20currently%20unassigned%20and%20open%20for%20any%22)
 
 ---
 
