@@ -152,7 +152,7 @@ const Event = ({ eventItem }: any) => {
                         }
                     </div >
 
-                    <p className="h5"> <Markdown>{convertToMdLinks(eventItem.description)}</Markdown></p>
+                    <p className="h5" style={{ overflowWrap: 'break-word' }}> <Markdown>{eventItem.description}</Markdown></p>
                 </>
                 : <div>You will evaluate someone at {dayjs(eventItem.slots_data[0].begin_at).format('H:mm')}</div>
             }
