@@ -107,18 +107,18 @@ const MasterCalendar = ({
         <Card stretch className="no-mobile-grid" >
             <CardHeader style={
                 mobileDesign // TODO: test with other phones and make the classname
-                ? { 
-                    padding: 20,
-                    position: 'fixed',
-                    background: 'rgba(255, 255, 255, 0.5)', 
-                    backdropFilter: 'blur(0.2rem)',
-                    willChange: 'backdrop-filter',
-                    zIndex: 100
-                }
-                : {}
+                    ? {
+                        padding: 20,
+                        position: 'fixed',
+                        background: 'rgba(255, 255, 255, 0.5)',
+                        backdropFilter: 'blur(0.2rem)',
+                        willChange: 'backdrop-filter',
+                        zIndex: 100
+                    }
+                    : {}
             }>
                 <CardActions style={{ marginRight: 20 }}>
-                                        <CalendarTodayButton
+                    <CalendarTodayButton
                         unitType={unitType}
                         date={date}
                         setDate={setDate}
@@ -126,7 +126,7 @@ const MasterCalendar = ({
                         central
                     />
                 </CardActions>
-             <Popovers
+                <Popovers
                     desc={
                         <DatePicker
                             locale={fr}
@@ -138,17 +138,19 @@ const MasterCalendar = ({
                     placement="bottom-end"
                     className="mw-100"
                     trigger="click"
-            >
+                >
                     <Button color="light">{calendarDateLabel}</Button>
                 </Popovers>
 
-                {
-                    (refresh || !scaleUsers)
-                        ?
-                        <div className="spinner"> <Spinner random inButton /></div>
-                        :
-                        <Button icon='Refresh' color='storybook' onClick={refreshHandler} />
-                }
+                <div style={{ margin: '0 20' }}>
+                    {
+                        (refresh || !scaleUsers)
+                            ?
+                            <div className="spinner"> <Spinner random inButton /></div>
+                            :
+                            <Button icon='Refresh' color='storybook' onClick={refreshHandler} />
+                    }
+                </div>
                 <div className="switch_events">
                     <Button
                         style={{ minWidth: 50 }}
@@ -180,14 +182,14 @@ const MasterCalendar = ({
                                       Meeting rooms
                                     </Button> */}
                 </div>
-                
+
 
                 <CalendarViewModeButtons viewMode={viewMode} />
 
             </CardHeader>
             <CardBody isScrollable style={mobileDesign ? { marginTop: 112, } : {}}>
                 <DnDCalendar
-                    style={mobileDesign ? { maxHeight: '60vh' }: {}}
+                    style={mobileDesign ? { maxHeight: '60vh' } : {}}
                     formats={customFormats}
                     selectable
                     toolbar={false}
