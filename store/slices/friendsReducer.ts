@@ -17,7 +17,7 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         setSavedFriends(state, action: PayloadAction<any>) {
-            state.list = [...action.payload?.data];
+            state.list = action.payload?.data ? [...action.payload?.data] : [];
         },
         setSavedWavingHand(state, action: PayloadAction<any>) {
             state.wavingList = action.payload?.data;

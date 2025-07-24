@@ -84,21 +84,21 @@ const WavingHand: FC<any> = ({ token }: any) => {
                                     const isIdInSuccessWavingHand = successWavingHand.includes(waving.id);
                                     const isFriend = friends?.find(i => i.friend_id == waving.author_id);
                                     return (
-                                        <Card isCompact className={isFriend ? "friend" : ""} key={key} >
+                                        <Card isCompact borderSize={isFriend ? 2 : 0} borderColor="success" key={key} >
                                             <CardHeader style={{ borderRadius: 20 }} >
-                                                
+
                                                 <CardLabel>
-                                                    
+
                                                     <CardTitle>Hey, it's {waving.author_name},</CardTitle>
                                                 </CardLabel>
 
                                                 <Icon
-                                                    style={{ 
+                                                    style={{
                                                         position: 'absolute',
                                                         top: '20px',
                                                         right: '20px',
                                                         opacity: .1,
-                                                     }}
+                                                    }}
                                                     icon="WavingHand"
                                                     color={darkModeStatus ? 'light' : 'dark'}
                                                     size="6x"

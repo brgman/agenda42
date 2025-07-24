@@ -1,6 +1,6 @@
 import Button from "../bootstrap/Button";
 import Card, { CardHeader, CardLabel, CardTitle } from "../bootstrap/Card";
-import { delay, getName, isMyPiscine, userInIntraHandler } from "../../helpers/helpers";
+import { delay, getMaxPage, getName, isMyPiscine, userInIntraHandler } from "../../helpers/helpers";
 import { useEffect, useState } from "react";
 import Collapse from "../bootstrap/Collapse";
 import Avatar from "../Avatar";
@@ -12,8 +12,11 @@ import useDarkMode from "../../hooks/useDarkMode";
 import Link from "next/dist/client/link";
 import { addFriendToList } from "../../store/slices/friendsReducer";
 
-const UsersOfEvent = ({ myId, id, size = 30, token, eventTitle }: any) => {
+const UsersOfEvent = ({ desc, myId, id, token, eventTitle }: any) => {
     const dispatch = useDispatch();
+    const [page, setPage] = useState(1);
+    const [maxPage, setMaxPage] = useState(1);
+    let isFetching = false;
 
     const me = useSelector((state: RootState) => state.user.me);
     const friends = useSelector((state: RootState) => state.friends.list);
@@ -89,47 +92,53 @@ const UsersOfEvent = ({ myId, id, size = 30, token, eventTitle }: any) => {
         };
 
     const [refresh, setRefresh] = useState(false);
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState<any>([]);
     const [isOpen, setIsOpen] = useState(false);
 
     const getUsersOfEvent = async () => {
+        if (isFetching) return;
+        isFetching = true;
+
         const maxRetries = 3; // Maximum number of retry attempts
         let retryCount = 0;
 
         const attemptRefresh = async () => {
             setRefresh(true);
 
-            console.log("*", users.length, refresh, isOpen)
+            try {
+                console.log("*", users.length, refresh, isOpen)
 
-            const res = await fetch(
-                "/api/users_of_event?id=" + id + "&size=" + size,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+                const res = await fetch(
+                    "/api/users_of_event?id=" + id + "&page=" + page,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                if (res.ok) {
+                    const response = await res?.json();
+                    console.log("response", response)
+                    const pageNumbers = getMaxPage(response?.links);
+                    if (maxPage <= 1) setMaxPage(pageNumbers);
+                    setUsers((last) => [...last, ...response.data]);
+                    setPage(page + 1);
+                    // Success case
+                } else if (res.status === 429 && retryCount < maxRetries) {
+                    // Handle 429 error with retry
+                    retryCount++;
+                    const retryAfter = res.headers.get('Retry-After')
+                        ? parseInt(res.headers.get('Retry-After')) * 1000
+                        : 5000 * retryCount; // Default to 5s, 10s, 15s
 
-            const response = await res.json();
-
-            if (res.ok) {
-                setUsers(response);
-                // Success case
-            } else if (res.status === 429 && retryCount < maxRetries) {
-                // Handle 429 error with retry
-                retryCount++;
-                const retryAfter = res.headers.get('Retry-After')
-                    ? parseInt(res.headers.get('Retry-After')) * 1000
-                    : 5000 * retryCount; // Default to 5s, 10s, 15s
-
-                console.log(`Rate limited. Retrying after ${retryAfter / 1000} seconds...`);
-                await delay(retryAfter);
+                    console.log(`Rate limited. Retrying after ${retryAfter / 1000} seconds...`);
+                    await delay(retryAfter);
                 // return await attemptRefresh(); // Recursive retry
-            } else {
-                return;
+                }
+            } finally {
+                setRefresh(false);
+                isFetching = false; // Reset flag
             }
-            setRefresh(false);
             await delay(3000);
         };
-
         await attemptRefresh();
     };
 
@@ -150,9 +159,10 @@ const UsersOfEvent = ({ myId, id, size = 30, token, eventTitle }: any) => {
                 className="mb-3"
             >
                 {
-                    refresh || users.length <= 0
-                        ? <Spinner isSmall />
-                        : "Users registered for this event"
+                    (refresh || users.length <= 0)
+                        ? <Spinner isSmall /> :
+                        desc?.toLowerCase().includes("aux femmes") ? "List of students (only be accessed to girls)"
+                        : "Students registered for this event"
                 }
             </Button>
             <Collapse
@@ -166,9 +176,9 @@ const UsersOfEvent = ({ myId, id, size = 30, token, eventTitle }: any) => {
                         const isFriend = friends?.find(i => i.friend_id == user.id);
                         return (
                             <Card isCompact key={key}
-                                className={isFriend ? "friend" : ""}
+                                borderSize={ isFriend ? 2 : 0}
+                                borderColor="success"
                             >
-
                                 <CardHeader
                                     style={{ borderRadius: 20 }}
                                 >
@@ -201,13 +211,15 @@ const UsersOfEvent = ({ myId, id, size = 30, token, eventTitle }: any) => {
                                             onClick={() => userInIntraHandler(user.id)}
                                         >
                                         </Button>
-                                        <Button
+                                        {isFriend 
+                                        ? <Button
                                             className='h4'
                                             icon={update ? "Refresh" : "WavingHand"}
                                             color={isIdInSuccessWavingHand ? "success" : "brand"}
                                             onClick={() => addWavingHandHandler(user.id, eventTitle, "send", me.image.versions.medium, getName(user), me.login)}
                                         >
-                                        </Button>
+                                        </Button> 
+                                        : null }
                                     </div>
                                     <div className='col-lg-6'>
                                         <div className='h4 text-end'>
@@ -225,14 +237,18 @@ const UsersOfEvent = ({ myId, id, size = 30, token, eventTitle }: any) => {
                     })
                 }
                 {
-                    users.length === 100
-                        ? <Link style={{
-                            margin: '40px auto',
-                            display: 'flex',
-                            width: 'max-content',
-                        }} href="https://github.com/brgman/agenda42/issues/66">Loaded just 100 last students...</Link>
-                        : null
-                }
+                    (maxPage !== page && maxPage > 1)
+                        ? (
+                            <Button
+                                style={{ width: '100%' }}
+                                className='h4'
+                                icon={"Download"}
+                                color={"success"}
+                                isDisable={refresh}
+                                onClick={() => getUsersOfEvent()}
+                            >Load page {page} from {maxPage}</Button>
+                        )
+                        : null}
                 <Button
                     color="dark"
                     isLight

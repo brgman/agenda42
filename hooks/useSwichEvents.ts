@@ -9,13 +9,14 @@ const useSwitchEvents = (events: any, allEvents: any, setEventsActive: any) => {
 
     function isException(eventItem: any) {
         return (
-            (eventItem.description?.toLowerCase().includes("aux femmes") && gender !== "F") ||
-            (eventItem.description?.toLowerCase().includes("aux hommes") && gender !== "M")
+            (eventItem.description?.toLowerCase().includes("aux femmes") && !(gender == "F" || gender == "O")) ||
+          (eventItem.description?.toLowerCase().includes("aux hommes") && !(gender == "M" || gender == "O"))
         );
     }
 
   useEffect(() => {
     if (switchEvents == 'all' && allEvents) {
+      console.log("allEvents 1", allEvents);
       const eventList = allEvents.filter(event => !isException(event)).map((event: any) => ({
         id: event.id,
         name: event.name ?? event.id,
@@ -32,6 +33,7 @@ const useSwitchEvents = (events: any, allEvents: any, setEventsActive: any) => {
         themes: event.themes,
         scale_team: "event",
       })) || [];
+      console.log("allEvents 2", eventList);
       setEventsActive([
         ...eventList,
         ...events,

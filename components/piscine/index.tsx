@@ -169,7 +169,7 @@ const Piscine: FC<any> = ({ token }: any) => {
                     />
                     <Badge
                         isLight={darkModeStatus ? false : true}
-                        color={ me.pool_month == monthSort && me.pool_year == yearSort ? 'piscine' : 'dark'}
+                        color={me.pool_month == monthSort && me.pool_year == yearSort ? 'piscine' : 'dark'}
                     > {monthSort} {yearSort}
                     </Badge>
                 </OffCanvasTitle>
@@ -186,7 +186,10 @@ const Piscine: FC<any> = ({ token }: any) => {
                                     const isIdInSuccessWavingHand = success && successWavingHand.includes(user.id);
                                     const isFriend = friends?.find(i => i.friend_id == user.id);
                                     return (
-                                        <Card isCompact className={isFriend ? "friend" : ""} >
+                                        <Card isCompact
+                                            borderSize={isFriend ? 2 : 0}
+                                            borderColor="success"
+                                        >
                                             <CardHeader style={{ borderRadius: 20 }} >
                                                 <CardLabel>
                                                     <CardTitle>
@@ -255,12 +258,12 @@ const Piscine: FC<any> = ({ token }: any) => {
                                                         onClick={() => userInIntraHandler(user.id)}
                                                     >
                                                     </Button>
-                                                    <Button
+                                                    {isFriend ? <Button
                                                         className='h4'
                                                         icon={update ? "Refresh" : "WavingHand"}
                                                         color={isIdInSuccessWavingHand ? "success" : "brand"}
                                                         onClick={() => addWavingHandHandler(user.id, "Pool", "send", me.image.versions.medium, getName(user), me.login)}
-                                                    />
+                                                    /> : null}
                                                 </div>
                                                 <div className='col-lg-6'>
                                                     <div className='h4 text-end'>
@@ -288,7 +291,7 @@ const Piscine: FC<any> = ({ token }: any) => {
                                             color={"success"}
                                             isDisable={refresh}
                                             onClick={() => getMyPiscine()}
-                                        >Page {page} from {maxPage}</Button>
+                                        >Load page {page} from {maxPage}</Button>
                                     ) : null}
                         </>
                 }
