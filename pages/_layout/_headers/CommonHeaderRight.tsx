@@ -91,7 +91,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							hoverShadow={'default'}
 							size={'lg'}
 							onClick={() => {
-								window.open('https://github.com/brgman/agenda42/issues/new', '_blank')
+								window.open('https://github.com/brgman/agenda42/issues/new?template=bug_report.md', '_blank')
 							}}
 							data-tour='new-issue'>
 							<span style={{fontSize: '1rem'}}>Bug request</span>
