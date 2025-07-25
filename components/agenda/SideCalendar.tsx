@@ -38,7 +38,7 @@ const SideCalendar = ({
     return (
         <Card stretch style={{ minHeight: 600 }}>
             <CardHeader>
-                <CardLabel icon="Today" iconColor="info">
+                <CardLabel icon="Today" iconColor="primary">
                     <CardTitle>
                         {dayjs(date).format("dddd, D MMMM")}
                     </CardTitle>

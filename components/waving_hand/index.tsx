@@ -84,48 +84,41 @@ const WavingHand: FC<any> = ({ token }: any) => {
                                     const isIdInSuccessWavingHand = successWavingHand.includes(waving.id);
                                     const isFriend = friends?.find(i => i.friend_id == waving.author_id);
                                     return (
-                                        <Card isCompact 
-                                            borderSize={2}
-                                            borderColor={isFriend ? "success" : null}
-                                            key={key} >
+                                        <Card isCompact key={key} >
                                             <CardHeader style={{ borderRadius: 20 }} >
-
-                                                <CardLabel>
-
-                                                    <CardTitle>Hey, it's {waving.author_name},</CardTitle>
-                                                </CardLabel>
-
                                                 <Icon
                                                     style={{
                                                         position: 'absolute',
                                                         top: '20px',
                                                         right: '20px',
-                                                        opacity: .1,
+                                                        opacity: .1
                                                     }}
                                                     icon="WavingHand"
                                                     color={darkModeStatus ? 'light' : 'dark'}
                                                     size="6x"
                                                 />
+
+                                                <CardLabel>
+
+                                                    <CardTitle>Hey, it's {waving.author_name}</CardTitle>
+                                                </CardLabel>
+
                                                 {waving.status != "read" ? <Badge color={'dark'} > not read </Badge> : null}
                                                 {/* <Avatar src={waving.author_image_url} size={32} /> */}
 
                                             </CardHeader>
                                             <div className='card-aside d-flex row align-items-end event_row m-3 mt-0'>
                                                 <p className="h6" style={{ marginTop: 10, marginBottom: 10, paddingRight: 30 }}>
-                                                    I'm waving at you because I saw you at the
-                                                    <span style={{ margin: 3 }}>{waving.event_title}</span>
-                                                    event!
+                                                   from event: {waving.event_title}
                                                 </p>
                                                 <div className='col-lg-6 p-1'>
                                                     <Button
-                                                        className='h4'
                                                         icon={update ? "Refresh" : "WavingHand"}
-                                                        color={isIdInSuccessWavingHand ? "success" : "secondary"}
+                                                        color={isIdInSuccessWavingHand ? "success" : "brand"}
                                                         onClick={() => addWavingHandHandler(waving.author_id, waving.event_title, "send", me.image.versions.medium, getName(me), me.login, waving.id)}
-                                                    >Waving back
-                                                    </Button>
+                                                    >Replay</Button>
                                                 </div>
-                                                <div className='col-lg-6'>
+                                                <div className='col-lg-6 '>
                                                     <div className='h4 text-end'>
                                                         <Badge
                                                             isLight={darkModeStatus ? false : true}

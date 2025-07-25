@@ -27,12 +27,11 @@ console.log("user", user)
                         style={btnStyle}
                         color="storybook"
                         type="submit"
+                        icon="Link"
                         onClick={() => {
                             window.open(getLinkForFriends42(user), '_blank');
                         }}
-                    >
-                        Show on Friends42
-                    </Button>
+                    >Friends42</Button>
                 ) : (
                     <Button
                         isDisable
