@@ -38,7 +38,6 @@ const MasterCalendar = ({
     setDate,
     viewMode,
     refresh,
-    scaleUsers,
     refreshHandler,
     eventsActive,
     views,
@@ -144,7 +143,7 @@ const MasterCalendar = ({
 
                 <div style={{ margin: '0 20' }}>
                     {
-                        (refresh || !scaleUsers)
+                        (refresh)
                             ?
                             <div className="spinner"> <Spinner random inButton /></div>
                             :
@@ -155,7 +154,7 @@ const MasterCalendar = ({
                     <Button
                         style={{ minWidth: 50 }}
                         icon="CalendarToday"
-                        isDisable={refresh || !scaleUsers}
+                        isDisable={refresh}
                         color={switchEvents == "all" ? 'primary' : 'light'}
                         onClick={() => {
                             dispatch(setSwitchEvents("all"))
@@ -168,7 +167,7 @@ const MasterCalendar = ({
                             : <Button
                                 style={{ minWidth: 50 }}
                                 icon="FilterAlt"
-                                isDisable={refresh || !scaleUsers}
+                                isDisable={refresh}
                                 color={switchEvents == "my" ? 'primary' : 'light'}
                                 onClick={() => dispatch(setSwitchEvents("my"))}
                             />

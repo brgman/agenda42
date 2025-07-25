@@ -25,7 +25,6 @@ import "dayjs/locale/fr";
 import showNotification from "../components/extras/showNotification";
 import { setDefances, setOriginalSlots, setScaleTeams, setSlots } from "../store/slices/slotsSlice";
 import { preparationSlots } from "../common/function/preparationSlots";
-import { getScaleTeams } from "../common/function/getScaleTeams";
 import { setEvals } from "../store/slices/evalsSlice";
 import { setEvents as setEventsRedux, setAllEvents } from '../store/slices/eventsSlice';
 import OverlappingModal from "../components/agenda/OverlappangModal";
@@ -80,7 +79,6 @@ const Index: NextPage = ({ token, me }: any) => {
   const slotsIntra = useSelector((state: RootState) => state.slots.slots);
   const originalSlotsIntra = useSelector((state: RootState) => state.slots.original);
   const viewMode = useSelector((state: RootState) => state.calendar.unitType);
-  const scaleUsers = useSelector((state: RootState) => state.slots.scaleTeam);
   const defances = useSelector((state: RootState) => state.slots.defances);
   const defancesHistory = useSelector((state: RootState) => state.slots.defancesHistory);
   const eventItem = useSelector((state: RootState) => state.calendar.eventActive);
@@ -301,22 +299,22 @@ const Index: NextPage = ({ token, me }: any) => {
     },
   });
 
-  // Fetch scaleUsers on mount
-  useEffect(() => {
-    const fetchScaleUsers = async () => {
-      try {
-        await delay(1000);
-        const users = await getScaleTeams(slotsIntra, token);
-        dispatch(setScaleTeams(users));
-      } catch (err) {
-        console.error("Failed to fetch scale users:", err);
-      }
-    };
+  // // Fetch scaleUsers on mount
+  // useEffect(() => {
+  //   const fetchScaleUsers = async () => {
+  //     try {
+  //       await delay(1000);
+  //       // const users = await getScaleTeams(slotsIntra, token);
+  //       // dispatch(setScaleTeams(users));
+  //     } catch (err) {
+  //       console.error("Failed to fetch scale users:", err);
+  //     }
+  //   };
 
-    if (slotsIntra && token) {
-      fetchScaleUsers();
-    }
-  }, [slotsIntra, token, dispatch]);
+  //   if (slotsIntra && token) {
+  //     fetchScaleUsers();
+  //   }
+  // }, [slotsIntra, token, dispatch]);
 
   useEffect(() => {
     if (eventItem)
@@ -403,7 +401,6 @@ const Index: NextPage = ({ token, me }: any) => {
               setDate={setDate}
               viewMode={viewMode}
               refresh={refresh}
-              scaleUsers={scaleUsers}
               refreshHandler={refreshHandler}
               eventsActive={eventsActive}
               views={views}
@@ -443,10 +440,10 @@ const Index: NextPage = ({ token, me }: any) => {
             {!eventAdding ? (
               <div className="row g-4" style={{ backgroundColor: 'transparent' }}>
                 {(eventItem?.scale_team?.id && !(eventItem?.type === "defances")) ? (
-                  <Evaluation token={token} eventItem={eventItem} scaleUsers={scaleUsers} me={me} />
+                  <Evaluation token={token} eventItem={eventItem} me={me} />
                 ) :
                 (eventItem?.type === "defances")
-                ? <Defanse token={token} eventItem={eventItem} scaleUsers={scaleUsers} me={me} />
+                ? <Defanse token={token} eventItem={eventItem} me={me} />
                 : (eventItem?.name != "Available")
                 ? <Event eventItem={eventItem} token={token} originalSlotsIntra={originalSlotsIntra} />
                 : <Slot eventItem={eventItem} token={token} originalSlotsIntra={originalSlotsIntra} />

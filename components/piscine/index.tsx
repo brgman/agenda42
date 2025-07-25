@@ -187,8 +187,8 @@ const Piscine: FC<any> = ({ token }: any) => {
                                     const isFriend = friends?.find(i => i.friend_id == user.id);
                                     return (
                                         <Card isCompact
-                                            borderSize={isFriend ? 2 : 0}
-                                            borderColor="success"
+                                            borderSize={2}
+                                            borderColor={isFriend ? "success" : null}
                                         >
                                             <CardHeader style={{ borderRadius: 20 }} >
                                                 <CardLabel>
@@ -282,7 +282,7 @@ const Piscine: FC<any> = ({ token }: any) => {
                             }
 
                             {
-                                maxPage !== page
+                                (maxPage >= page && maxPage > 1)
                                     ? (
                                         <Button
                                             style={{ width: '100%' }}

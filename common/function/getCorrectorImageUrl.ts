@@ -1,19 +1,15 @@
-export const getCorrectorImageUrl = (id: any, users: any, me: any) => {
-    let image = null;
-    users.map((i: any) => {
-        if (i.id == id)
-            image = i.image;
-    });
-    if (!image)
-        image = me?.image?.versions.small;
-    return (image);
+import { getName } from "../../helpers/helpers";
+
+export const getCorrectorImageUrl = (id: number, users: any, me: any): string | undefined => {
+    const user = users?.find((user) => user.id === id);
+    return user?.image?.versions.small ?? me?.image?.versions.small;
 };
 
 export const getCorrectorName = (id: any, users: any, me: any) => {
     let name = null;
     users.map((i: any) => {
         if (i.id == id) {
-            name = `${i.usual_full_name} (${i.login})`;
+            name = `${getName(i)} (${i.login})`;
         }
     });
     if (!name)
@@ -21,13 +17,7 @@ export const getCorrectorName = (id: any, users: any, me: any) => {
     return (name);
 };
 
-
 export const getRentre = (id: any, users: any, me: any) => {
-    let name = null;
-    users.map((i: any) => {
-        if (i.id == id) {
-            name = `${i.pool_month} ${i.pool_year}`;
-        }
-    });
-    return (name);
+    const user = users?.find((user) => user.id === id);
+    return (`${user.pool_month} ${user.pool_year}`);
 };

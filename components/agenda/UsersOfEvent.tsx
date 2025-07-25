@@ -116,8 +116,8 @@ const UsersOfEvent = ({ desc, myId, id, token, eventTitle }: any) => {
                 );
                 if (res.ok) {
                     const response = await res?.json();
-                    console.log("response", response)
                     const pageNumbers = getMaxPage(response?.links);
+                    console.log("response", response, pageNumbers)
                     if (maxPage <= 1) setMaxPage(pageNumbers);
                     setUsers((last) => [...last, ...response.data]);
                     setPage(page + 1);
@@ -176,8 +176,8 @@ const UsersOfEvent = ({ desc, myId, id, token, eventTitle }: any) => {
                         const isFriend = friends?.find(i => i.friend_id == user.id);
                         return (
                             <Card isCompact key={key}
-                                borderSize={ isFriend ? 2 : 0}
-                                borderColor="success"
+                                borderSize={2}
+                                borderColor={isFriend ? "success" : null}
                             >
                                 <CardHeader
                                     style={{ borderRadius: 20 }}
@@ -237,7 +237,7 @@ const UsersOfEvent = ({ desc, myId, id, token, eventTitle }: any) => {
                     })
                 }
                 {
-                    (maxPage !== page && maxPage > 1)
+                    (maxPage >= page && maxPage > 1)
                         ? (
                             <Button
                                 style={{ width: '100%' }}
