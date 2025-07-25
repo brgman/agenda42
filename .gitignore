@@ -4,6 +4,7 @@
 /.pnp
 .pnp.js
 agenda42.sqlite
+
 # testing
 /coverage
 
