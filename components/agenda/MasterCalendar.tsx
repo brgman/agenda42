@@ -138,7 +138,7 @@ const MasterCalendar = ({
                     className="mw-100"
                     trigger="click"
                 >
-                    <Button color="light">{calendarDateLabel}</Button>
+                    <Button color={darkModeStatus ? 'dark' : 'light'} >{calendarDateLabel}</Button>
                 </Popovers>
 
                 <div style={{ margin: '0 20' }}>
@@ -147,7 +147,7 @@ const MasterCalendar = ({
                             ?
                             <div className="spinner"> <Spinner random inButton /></div>
                             :
-                            <Button icon='Refresh' color='storybook' onClick={refreshHandler} />
+                            <Button icon='Refresh' color={darkModeStatus ? 'dark' : 'light'} onClick={refreshHandler} />
                     }
                 </div>
                 <div className="switch_events">
@@ -155,7 +155,7 @@ const MasterCalendar = ({
                         style={{ minWidth: 50 }}
                         icon="CalendarToday"
                         isDisable={refresh}
-                        color={switchEvents == "all" ? 'primary' : 'light'}
+                        color={switchEvents == "all" ? 'primary' : darkModeStatus? 'dark': 'light' }
                         onClick={() => {
                             dispatch(setSwitchEvents("all"))
                             setMyEvents();
@@ -168,7 +168,7 @@ const MasterCalendar = ({
                                 style={{ minWidth: 50 }}
                                 icon="FilterAlt"
                                 isDisable={refresh}
-                                color={switchEvents == "my" ? 'primary' : 'light'}
+                                color={switchEvents == "my" ? 'primary' : darkModeStatus ? 'dark': 'light' }
                                 onClick={() => dispatch(setSwitchEvents("my"))}
                             />
                     }
