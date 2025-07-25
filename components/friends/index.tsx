@@ -10,6 +10,7 @@ import Button from "../bootstrap/Button";
 import Badge from "../bootstrap/Badge";
 import useDarkMode from "../../hooks/useDarkMode";
 import { addFriendToPinList, removeFriendFromList, removeFriendFromPinList } from "../../store/slices/friendsReducer";
+import Icon from "../icon/Icon";
 
 const Friends: FC<any> = ({ token }: any) => {
     const friendsIsOpen = useSelector((state: RootState) => state.settings.friendsIsOpen);
@@ -77,19 +78,25 @@ const Friends: FC<any> = ({ token }: any) => {
                 className="p-4"
             >
                 <OffCanvasTitle id="canvas-title" className="h2">
+                                        <Icon
+                                            style={{ marginRight: 10 }}
+                                            icon={'Group'}
+                                            color={darkModeStatus ? 'light' : 'dark'}
+                                        />
                     Friends
                 </OffCanvasTitle>
             </OffCanvasHeader>
             <OffCanvasBody tag="form" className="p-4" >
-                <Button
+                {/* <Button
                     style={{ marginBottom: 30, textAlign: 'left' }}
-                    icon="PushPin"
+                    icon="Star"
                     color={me.correction_point >= pointsForPinned ? "warning" : "light"}
                     isDisable
                 >
-                    You can pin friends to filter the agenda if you’ve got {pointsForPinned} or more correction points. Right now, you’re sitting at {me.correction_point} correction points. Oh, and heads up—those points reset to 4 every Sunday!
-
-                </Button>
+                    You can add friends to your favorites if you have {pointsForPinned} or more correction points. 
+                    Right now, you have {me.correction_point} correction points. 
+                    (Points reset every Sunday)
+                </Button> */}
                 {
                     pinSort(alphabeticSort(users, "friend_login"), pins).map((user, key) => {
                         const isIdInSuccess = success && success.includes(user.id);
@@ -133,7 +140,7 @@ const Friends: FC<any> = ({ token }: any) => {
                                 <Button
                                     style={{ position: 'absolute', top: 5, right: 5 }}
                                     className='h4'
-                                    icon="PushPin"
+                                    icon="Star"
                                     color={isPined ? "warning" : "light"}
                                     isDisable={me.correction_point < pointsForPinned}
                                     onClick={() => pinFriendHandler(user.friend_id)}

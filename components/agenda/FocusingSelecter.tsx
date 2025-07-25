@@ -63,13 +63,13 @@ const FocusingSelector = ({ token, setLoad, friends, me }: any) => {
                     <DropdownItem>
                         <Button
                             color="link"
-                            icon={pins.length ? "PushPin" : "Info"}
+                            icon={pins.length ? "Star" : "Info"}
                             isDisable
                         >
                             {
                                 pins.length
-                                    ? "Your pinned friends"
-                                    : "Max 3 random or pined friends"
+                                    ? "Your best friends"
+                                    : "Your 3 random friends"
                             }
                         </Button>
                     </DropdownItem>

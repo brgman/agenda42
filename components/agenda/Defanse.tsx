@@ -188,10 +188,10 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                                         />
                                         <CardLabel iconColor="dark">
                                             <CardTitle>
-                                                {i == 0 ? <Icon style={{ marginRight: 15 }} size="lg" color="dark" icon="Star" /> : null}
+                                                {(i == 0 && eventItem?.scale_team?.correcteds.length > 1) ? <Icon style={{ marginRight: 15 }} size="lg" color="dark" icon="Star" /> : null}
                                                 {getCorrectorName(profile.id, correctedsData, {}) || profile.login}</CardTitle>
                                             <p style={{ marginTop: 5 }}>
-                                                {dayjs(eventItem?.scale_team.begin_at).format('dddd, D MMMM H:mm')}
+                                                {i == 0 ? dayjs(eventItem?.scale_team.begin_at).format('dddd, D MMMM H:mm') : null}
                                             </p>
                                             <div className="df">
                                                 {

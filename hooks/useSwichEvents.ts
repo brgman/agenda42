@@ -22,7 +22,7 @@ const useSwitchEvents = (events: any, allEvents: any, setEventsActive: any) => {
         name: event.name ?? event.id,
         start: dayjs(event["begin_at"]).toDate(),
         end: dayjs(event["end_at"]).toDate(),
-        color: events.some(e => event.id === e.id) ? "danger" : "primary",
+        color: events.some(e => event.id === e.id) ? "danger" : "info",
         user: null,
         description: event.description,
         kind: event.kind,

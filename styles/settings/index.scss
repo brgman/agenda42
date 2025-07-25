@@ -40,14 +40,14 @@ $grays: (
 	'900': $gray-900,
 );
 
-$primary: #6c5dd3; // Don't forget to make changes to the .env file as well.
-$secondary: #ffa2c0; // Don't forget to make changes to the .env file as well.
-$success: #46bcaa; // Don't forget to make changes to the .env file as well.
-$info: #4d69fa; // Don't forget to make changes to the .env file as well.
-$warning: #ffcf52; // Don't forget to make changes to the .env file as well.
-$danger: #f35421; // Don't forget to make changes to the .env file as well.
-$light: #e7eef8; // Don't forget to make changes to the .env file as well.
-$dark: #1f2128; // Don't forget to make changes to the .env file as well.
+$primary: #00babc; 
+$secondary: #ffa2c0; 
+$success: #46bcaa; 
+$info: #4d69fa; 
+$warning: #ffcf52; 
+$danger: #f35421; 
+$light: #e7eef8; 
+$dark: #1f2128; 
 
 //
 // Options
@@ -73,7 +73,7 @@ $prefix: $variable-prefix !default;
 // Control the default styling of most Bootstrap elements by modifying these
 // variables. Mostly focused on spacing.
 // You can add more entries to the $spacers map, should you need more variation.
-$spacer: 1rem; // Don't forget to make changes to the .env file as well.
+$spacer: 1rem; 
 $enable-negative-margins: true;
 
 //

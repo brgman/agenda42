@@ -27,7 +27,7 @@ const useParsingEvents = (
                 name: event.name ?? event.id,
                 start: dayjs(event["begin_at"]).toDate(),
                 end: dayjs(event["end_at"]).toDate(),
-                color: "primary",
+                color: "danger",
                 user: null,
                 description: event.description,
                 kind: event.kind,

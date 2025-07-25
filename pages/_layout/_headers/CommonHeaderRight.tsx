@@ -87,6 +87,8 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 				<div className='col-auto'>
 					<Popovers trigger='hover' desc='Submit suggestions and bug reports in the issues.'>
 						<Button
+							icon="BugReport"
+							isLight={!darkModeStatus}
 							color= {darkModeStatus ? 'dark' : 'light'}
 							hoverShadow={'default'}
 							size={'lg'}
@@ -94,7 +96,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 								window.open('https://github.com/brgman/agenda42/issues/new?template=bug_report.md', '_blank')
 							}}
 							data-tour='new-issue'>
-							<span style={{fontSize: '1rem'}}>Bug request</span>
+							<span style={{fontSize: '1rem'}}>Bug report</span>
 						</Button>
 					</Popovers>
 				</div>
