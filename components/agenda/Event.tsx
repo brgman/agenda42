@@ -54,6 +54,7 @@ function getIsException(eventItem: any, gender: string) {
 }
 
 const Event = ({ eventItem }: any) => {
+    const titleForWaving = `${eventItem.name} (${eventItem.location}), start at ${dayjs(eventItem.start).format('DD MMMM H:mm') }.`;
     const me = useSelector((state: RootState) => state.user.me);
     const gender = useSelector((state: RootState) => state.settings.gender?.gender);
     const isException = getIsException(eventItem, gender);
@@ -107,7 +108,7 @@ const Event = ({ eventItem }: any) => {
 
                     {
                         !isException
-                            ? <UsersOfEvent desc={eventItem.description} gender={gender} id={eventItem.id} myId={me.id} eventTitle={eventItem.name} />
+                            ? <UsersOfEvent desc={eventItem.description} gender={gender} id={eventItem.id} myId={me.id} eventTitle={titleForWaving} />
                             : <Button
                                 isDisable
                                 color="dark"
