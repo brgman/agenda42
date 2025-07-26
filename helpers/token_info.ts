@@ -6,8 +6,6 @@ export default async function getVerifyTokenInfo(req: any, res: any) {
         ? Object.fromEntries(cookies.split("; ").map((c: any) => c.split("=")))
         : {};
     const tokenFromCookie = cookieObj["token"];
-    if (!cookieObj["encrypted_id"])
-        return res.status(403).json({ status: "Forbidden" });
 
     try {
         const isAuth = await axios.get(

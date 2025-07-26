@@ -101,15 +101,15 @@
 			@include backdrop-filter-blur(map.get($header, blur));
 
 			position: fixed;
-			top: 0;
+			top: -50px;
 			right: 0;
 			left: 0;
 			background-color: rgba(map.get($header, background-color), map.get($header, opacity));
 			box-shadow: $box-shadow;
 			opacity: 0;
 			transition:
-				all 0.2s ease,
-				opacity 0.1s ease-in-out;
+				all 0.3s ease,
+				opacity 0.3s ease-in-out;
 
 			&-open & {
 				top: map.get($header, height);
