@@ -53,9 +53,7 @@ const FocusingSelector = ({ token, setLoad, friends, me }: any) => {
         <CardActions>
             <Dropdown direction="down">
                 <DropdownToggle>
-                    <Button
-                        color={pins.length ? "warning" : "primary"}
-                    >
+                    <Button color="primary">
                         {list?.find(i => (i.friend_id == selected))?.friend_name ?? getName(me)}
                     </Button>
                 </DropdownToggle>

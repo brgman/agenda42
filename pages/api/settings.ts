@@ -1,6 +1,8 @@
+import getVerifyTokenInfo from "../../helpers/token_info";
 import db from "../../lib/sqlite";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
+    await getVerifyTokenInfo(req, res);
     if (req.method === "POST") {
         const { user_id, view_default, theme_default, chat_id } = req.body;
 

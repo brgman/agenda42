@@ -49,6 +49,7 @@ import Piscine from "../components/piscine";
 import Friends from "../components/friends";
 import WavingHand from "../components/waving_hand";
 import GenderModal from "../components/GenderModal";
+import { encrypt } from "../lib/encryption";
 
 axiosRetry(axios, {
   retries: 3,
@@ -466,7 +467,7 @@ const Index: NextPage = ({ token, me }: any) => {
   );
 };
 
-export async function getServerSideProps({ req, locale }: any) {
+export async function getServerSideProps({ req, locale, res }: any) {
   const { token, expires_at } = req.cookies || {};
 
   console.log("Cookies received:", { token, expires_at });
@@ -507,6 +508,13 @@ export async function getServerSideProps({ req, locale }: any) {
     const response = await axios.get("https://api.intra.42.fr/v2/me", {
       headers: { Authorization: `Bearer ${token}` },
     });
+
+    const encryptedId = encrypt(response.data.id);
+
+    res.setHeader("Set-Cookie", [
+      `encrypted_id=${encryptedId}; Path=/; HttpOnly; SameSite=Strict`,
+    ]);
+
     console.log("User data fetched:", response.data.login);
     return {
       props: {
@@ -515,7 +523,7 @@ export async function getServerSideProps({ req, locale }: any) {
       },
     };
   } catch (error: any) {
-    console.error("API error:", error.response?.status, error.response?.data);
+    console.error("API error:", error);
     return {
       redirect: { destination: authUrl, permanent: false },
     };

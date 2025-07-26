@@ -1,6 +1,10 @@
+import axios from "axios";
 import db from "../../lib/sqlite";
+import getVerifyTokenInfo from "../../helpers/token_info";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
+    await getVerifyTokenInfo(req, res);
+
     if (req.method === "POST") {
         const { user_id, friend_id, friend_login, friend_name, friend_image, pool_year, pool_month } = req.body;
 

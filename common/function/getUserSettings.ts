@@ -18,7 +18,7 @@ export async function getUserSettings(userId: any): Promise<void> {
     }
 }
 
-export async function getUserFriends(userId: any): Promise<void> {
+export async function getUserFriends(userId: any, token: any): Promise<void> {
     if (!userId) return;
     try {
         const response = await fetch(`/api/friends?user_id=${userId}`, {

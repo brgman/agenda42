@@ -38,8 +38,12 @@ const calendarSlice = createSlice({
             state.eventActive = initialEventItem;
         },
         setEventActive(state, action: PayloadAction<IEvent>) {
-            console.log("aps", !isTilePast(action.payload.start), action.payload.kind != "slot");
-            if (!(isTilePast(action.payload.start) && action.payload.kind == "slot"))
+            if (
+                !(
+                    isTilePast(action.payload.start)
+                    && (action.payload.kind == "slot" || action.payload.scale_team == 'locations')
+                )
+            )
             {
                 state.eventActive = action.payload;
                 state.canvasIsOpen = true;

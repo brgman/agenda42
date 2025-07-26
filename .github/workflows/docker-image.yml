@@ -50,7 +50,7 @@ jobs:
             -e STATUS=${{ secrets.STATUS }} \
             -e POINTS_FOR_PINNED=${{ secrets.POINTS_FOR_PINNED }} \
             -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
-            -v /home/aron/agenda42.sqlite:/app/agenda42.sqlite \
+            -v /home/aron/agenda42.sqlite:/app/lib/agenda42.sqlite \
             agenda42:latest
 
       - name: Push Docker image to GitHub Container Registry (latest)

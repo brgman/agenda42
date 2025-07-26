@@ -43,11 +43,9 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             if (!response.ok) {
                 throw new Error(`Failed to refresh agenda: ${res.message || response.status}`);
             }
-
-            // Update Redux store in a single batch to minimize re-renders
-            console.log("locations", res.locations);
+            
             const settingsData = await getUserSettings(me.id);
-            const friendsData = await getUserFriends(me.id);
+            const friendsData = await getUserFriends(me.id, token);
             const wavingHandData = await getUserWavingHand(me.id);
             dispatch(setSavedSettings(settingsData));
             dispatch(setSavedFriends(friendsData));
