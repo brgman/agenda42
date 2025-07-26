@@ -15,8 +15,6 @@ jobs:
         run: |
           df -h
           rm -rf node_modules/.cache dist
-          rm -rf /tmp/*
-          docker system prune -a --volumes
 
       - name: Check runner user
         run: whoami
