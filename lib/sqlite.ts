@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { join } from "path";
 
-const dbPath = join(process.cwd(), "agenda42.sqlite");
+const dbPath = join(process.cwd(), "lib/agenda42.sqlite");
 const db = new Database(dbPath);
 
 console.log("Connected to SQLite database:", dbPath);

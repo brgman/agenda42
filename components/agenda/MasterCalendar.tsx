@@ -163,7 +163,7 @@ const MasterCalendar = ({
                         }}
                     />
                     {
-                        (pins.lenght)
+                        (pins.length > 0)
                             ? <FocusingSelector me={me} token={token} setLoad={setLoad} friends={friends} />
                             : <Button
                                 style={{ minWidth: 50 }}

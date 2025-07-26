@@ -10,7 +10,7 @@ export const CorrectorLocation = ({ id, token = null, user = null }: { id: any; 
         const claster = i.location.split("r")[0];
         return `https://friends.42paris.fr/?cluster=${claster}&p=${i.location}`;
     };
-console.log("user", user)
+
     const btnStyle = {
         transition: 'filter 0.3s ease',
         filter: 'none',

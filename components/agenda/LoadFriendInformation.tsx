@@ -23,17 +23,17 @@ export const LoadFriendInformation = ({ setLoad, isPined, token = null, id }: { 
         })
     }, [isFetched]);
     
-    console.log('data', data
-
-    )
+    
     if (!data)
         return;
+
+    console.log('data', data);
 
     return (
          <CardBody>
             <img style={{
                 position: 'absolute',
-    top: 'calc(50% - 100px / 2)',
+    top: '80px',
     left: 'calc(50% - 100px / 2)',
     width: 100,
     height: 100,
@@ -41,7 +41,7 @@ export const LoadFriendInformation = ({ setLoad, isPined, token = null, id }: { 
                 }} src={data?.coalitions[data.coalitions.length - 1].image_url}/>
             <Button
                 icon="Link"
-                style={{ margin: '15px 15px 30px 0' }}
+                style={{ margin: '15px 15px 30px 0', backgroundColor: data?.coalitions[data.coalitions.length - 1].color }}
                 color="success"
                 onClick={() => window.open(`https://profile.intra.42.fr/users/${id | 0}`, '_blank')}
             >
@@ -54,14 +54,16 @@ export const LoadFriendInformation = ({ setLoad, isPined, token = null, id }: { 
 							<th>project</th>
 							<th>status</th>
                             <th>final_mark</th>
+                            <th>retry</th>
 						</tr>
 					</thead>
 					<tbody>
-						{data?.projects_users.filter(i => (i.cursus_ids == 21)).map((item) => (
+						{data?.projects_users.map((item) => (
 							<tr key={item.id}>
 								<td>{item.project.name}</td>
 								<td>{item.status}</td>
                                 <td>{item.final_mark}</td>
+                                {item.occurrence  && <td>{item.occurrence}</td>}
 							</tr>
 						))}
 					</tbody>

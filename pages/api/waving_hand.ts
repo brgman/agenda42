@@ -1,6 +1,8 @@
+import getVerifyTokenInfo from "../../helpers/token_info";
 import db from "../../lib/sqlite";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
+    await getVerifyTokenInfo(req, res);
     if (req.method === "POST") {
         const { author_id, destinator_id, event_title, status, author_image_url, author_name, author_login } = req.body;
 
