@@ -1,7 +1,7 @@
 export async function getUserSettings(userId: any): Promise<void> {
     if (!userId) return;
     try {
-        const response = await fetch(`/api/settings?user_id=${userId}&allow_id=${userId}`, {
+        const response = await fetch(`/api/settings?user_id=${userId}`, {
             method: "GET",
         });
 
@@ -21,7 +21,7 @@ export async function getUserSettings(userId: any): Promise<void> {
 export async function getUserFriends(userId: any, token: any): Promise<void> {
     if (!userId) return;
     try {
-        const response = await fetch(`/api/friends?user_id=${userId}&allow_id=${userId}`, {
+        const response = await fetch(`/api/friends?user_id=${userId}`, {
             method: "GET",
         });
 
@@ -38,10 +38,10 @@ export async function getUserFriends(userId: any, token: any): Promise<void> {
     }
 }
 
-export async function getGenderOfUser(userId: any, id: number): Promise<void> {
+export async function getGenderOfUser(userId: any): Promise<void> {
     if (!userId) return;
     try {
-        const response = await fetch(`/api/gender?user_id=${userId}&allow_id=${id}`, {
+        const response = await fetch(`/api/gender?user_id=${userId}`, {
             method: "GET",
         });
 
@@ -56,7 +56,7 @@ export async function getGenderOfUser(userId: any, id: number): Promise<void> {
 export async function getUserWavingHand(userId: any): Promise<void> {
     if (!userId) return;
     try {
-        const response = await fetch(`/api/waving_hand?destinator_id=${userId}&allow_id=${userId}`, {
+        const response = await fetch(`/api/waving_hand?destinator_id=${userId}&user_id=${userId}`, {
             method: "GET",
         });
 

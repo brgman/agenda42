@@ -28,7 +28,7 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
         try {
             setLoad(true);
             dispatch(setUser(me));
-            const genderData = await getGenderOfUser(me.login, me.id);
+            const genderData = await getGenderOfUser(me.id);
             console.log("genderData", genderData)
             dispatch(setGender(genderData));
             if (genderData.status == "NOT_FOUND" || genderData.status == "Forbidden")

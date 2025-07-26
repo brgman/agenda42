@@ -21,12 +21,10 @@ export default async function getVerifyTokenInfo(req: any, res: any) {
             },
         );
 
-        // console.log("### ", isAuth.data.resource_owner_id, user_id)
-
-        if ((req.method === "POST" || req.method === "DELETE") && req.body["allow_id"] !== user_id_decrypt)
+        if ((req.method === "POST" || req.method === "DELETE") && req.body["user_id"].toString() !== user_id_decrypt)
             return res.status(403).json({ status: "Forbidden" });
 
-        if ((req.method === "GET" || req.method === "PATH") && req.query["allow_id"] !== user_id_decrypt)
+        if ((req.method === "GET" || req.method === "PATH") && req.query["user_id"].toString() !== user_id_decrypt)
             return res.status(403).json({ status: "Forbidden" });
 
         if (isAuth.data?.resource_owner_id != user_id_decrypt)

@@ -20,7 +20,7 @@ const GenderModal: React.FC = ({ token, setLoad }: any) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                user_id: me.login,
+                user_id: me.id,
                 gender: gender
             }),
         }).then(async (response) => {
