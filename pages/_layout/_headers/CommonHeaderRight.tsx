@@ -38,7 +38,11 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 	const friendsIsOpen = useSelector((state: RootState) => state.settings.friendsIsOpen);
 	const wavingHandIsOpen = useSelector((state: RootState) => state.settings.wavingHandIsOpen);
 	const friends = useSelector((state: RootState) => state.friends.list);
+	const wavingList = useSelector((state: RootState) => state.friends.wavingList);
+	const wavingNotRead = wavingList?.filter(i => i.status === "send").length || 0;
 	const me = useSelector((state: RootState) => state.user.me);
+
+	console.log("wavingList", wavingList)
 
     const dispatch = useDispatch();
     const router = useRouter();
@@ -135,6 +139,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 					</Popovers>
 				</div>
 				<div className='col-auto'>
+					
 					<Popovers trigger='hover' desc='Waving Hands'>
 						<Button
 							// eslint-disable-next-line react/jsx-props-no-spreading
@@ -147,6 +152,9 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 								color={darkModeStatus ? 'light' : 'dark'}
 								className='btn-icon'
 							/>
+							{wavingNotRead  != 0 && <span className='position-absolute top-15 start-85 translate-middle badge rounded-pill bg-danger'>
+								{wavingNotRead} <span className='visually-hidden'>unread messages</span>
+							</span>}
 						</Button>
 					</Popovers>
 				</div>

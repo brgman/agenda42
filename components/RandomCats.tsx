@@ -1,7 +1,7 @@
 import React from 'react';
 
 const RandomCats: React.FC = () => {
-    const isRandomlyShown = Math.random() > 0.99;
+    const isRandomlyShown = Math.random() > 0.995;
 
     if (!isRandomlyShown)
         return (null);
