@@ -75,6 +75,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const limit = pLimit(2);
 
         const requests = {
+            // correction_point_historics: () => api.get(`users/${id}/correction_point_historics`),
+            // expertises_users: () => api.get(`/users/${id}/expertises_users`),
+            // teams: () => api.get(`/users/${id}/teams`),
             coalitions: () => api.get(`/users/${id}/coalitions`),
             projects_users: () => api.get(`/users/${id}/projects_users`, { params: { sort: '-created_at', 'page[size]': '100' } }),
         };
