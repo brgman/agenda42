@@ -1,16 +1,13 @@
 import axios, { AxiosError } from 'axios';
+import { NextApiRequest, NextApiResponse } from 'next';
+import pLimit from 'p-limit';
 
 const BASE_URL = 'https://api.intra.42.fr/v2';
 const RETRY_CONFIG = {
-    maxRetries: 3,
-    baseDelayMs: 1000,
+    maxRetries: 5,
+    baseDelayMs: 2000,
     maxDelayMs: 10000,
 } as const;
-
-interface ApiResponse<T> {
-    data: T;
-    status: number;
-}
 
 interface CookieObject {
     [key: string]: string;
@@ -25,21 +22,32 @@ const getBackoffDelay = (attempt: number, retryAfter?: string): number => {
     return Math.min(exponential + Math.random() * 100, RETRY_CONFIG.maxDelayMs);
 };
 
-export const createApiClient = (token: string) => {
+const validateToken = async (token: string) => {
+    try {
+        await axios.get(`${BASE_URL}/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+const createApiClient = (token: string) => {
     const instance = axios.create({
         baseURL: BASE_URL,
         headers: {
             Authorization: `Bearer ${token}`,
             'Accept': 'application/json',
         },
-        timeout: 5000,
+        timeout: 15000,
     });
 
     instance.interceptors.response.use(
         response => response,
         async (error) => {
             const config = error.config;
-            if (!config || error.response?.status !== 429 || config._retryCount >= RETRY_CONFIG.maxRetries) {
+            if (!config || ![429, 500].includes(error.response?.status) || config._retryCount >= RETRY_CONFIG.maxRetries) {
                 return Promise.reject(error);
             }
 
@@ -53,40 +61,46 @@ export const createApiClient = (token: string) => {
     return instance;
 };
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         const { id } = req.query;
         const cookies = parseCookies(req.headers.cookie || '');
         const token = cookies.token;
 
-        if (!token) {
-            return res.status(401).json({ error: 'Authentication token required' });
+        if (!token || !(await validateToken(token))) {
+            return res.status(401).json({ error: 'Invalid or expired token' });
         }
 
         const api = createApiClient(token);
+        const limit = pLimit(2);
 
         const requests = {
-            correction_point_historics: () => api.get(`users/${id}/correction_point_historics`),
+            // correction_point_historics: () => api.get(`users/${id}/correction_point_historics`),
+            // expertises_users: () => api.get(`/users/${id}/expertises_users`),
+            // teams: () => api.get(`/users/${id}/teams`),
             coalitions: () => api.get(`/users/${id}/coalitions`),
-            expertises_users: () => api.get(`/users/${id}/expertises_users`),
-            groups: () => api.get(`/users/${id}/groups`),
-            groups_users: () => api.get(`/users/${id}/groups_users`),
-            projects_users: () => api.get(`/users/${id}/projects_users`),
-            teams: () => api.get(`/users/${id}/teams`),
-
+            projects_users: () => api.get(`/users/${id}/projects_users`, { params: { sort: '-created_at', 'page[size]': '100' } }),
         };
-        
-        const results = await Promise.all(
-            Object.entries(requests).map(async ([key, request]) => {
-                const response = await request();
-                return [key, response.data];
-            })
+
+        const results = await Promise.allSettled(
+            Object.entries(requests).map(([key, request]) =>
+                limit(async () => {
+                    try {
+                        const response = await request();
+                        return [key, response.data];
+                    } catch (error) {
+                        return [key, { error: error.message || 'Request failed' }];
+                    }
+                })
+            )
         );
 
-        const responseData = Object.fromEntries([
-            ...results,
-            ['cookies', cookies]
-        ]);
+        const responseData = Object.fromEntries(
+            results
+                .filter((result): result is PromiseFulfilledResult<[string, any]> => result.status === 'fulfilled')
+                .map(result => result.value)
+                .concat([['cookies', cookies]])
+        );
 
         return res.status(200).json(responseData);
 
@@ -95,7 +109,12 @@ export default async function handler(req: any, res: any) {
         const status = err instanceof AxiosError ? (err.response?.status || 500) : 500;
         const message = err instanceof AxiosError ? (err.response?.data?.message || err.message) : 'Internal server error';
 
-        console.error('API Error:', { message, status, stack: err.stack });
+        console.error('API Error:', {
+            message,
+            status,
+            stack: err.stack,
+            response: err instanceof AxiosError ? err.response?.data : null,
+        });
         return res.status(status).json({ error: message });
     }
 }

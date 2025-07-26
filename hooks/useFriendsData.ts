@@ -27,7 +27,7 @@ export const useFriendsData = ({ id, token, setLoad }: any) => {
                 throw new Error(`Failed to refresh agenda: ${res.message || response.status}`);
             }
 
-            console.log("refreshAgenda: ", res);
+            return (res);
         } catch (error) {
             console.error('Refresh Agenda Error:', error);
         } finally {

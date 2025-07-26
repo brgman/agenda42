@@ -31,6 +31,7 @@ import FocusingSelector from "./FocusingSelecter";
 import showNotification from "../extras/showNotification";
 import Icon from "../icon/Icon";
 import { useRefreshFriends } from "../../hooks/useRefreshFriends";
+import { getName } from "../../helpers/helpers";
 
 const MasterCalendar = ({
     unitType,
@@ -54,7 +55,7 @@ const MasterCalendar = ({
     const wavingList = useSelector((state: RootState) => state.friends.wavingList);
     const me = useSelector((state: RootState) => state.user.me);
     const setMyEvents = useRefreshFriends(me?.id, token, setLoad);
-
+    const pins = useSelector((state: RootState) => state.friends.pins);
     const todayAt8AM = dayjs().set('hour', 8).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
     const todayAt0AM = dayjs().set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
     const todayAt20PM = dayjs().set('hour', 20).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
@@ -162,7 +163,7 @@ const MasterCalendar = ({
                         }}
                     />
                     {
-                        (switchEvents == "my")
+                        (pins.lenght)
                             ? <FocusingSelector me={me} token={token} setLoad={setLoad} friends={friends} />
                             : <Button
                                 style={{ minWidth: 50 }}
@@ -170,7 +171,7 @@ const MasterCalendar = ({
                                 isDisable={refresh}
                                 color={switchEvents == "my" ? 'primary' : darkModeStatus ? 'dark': 'light' }
                                 onClick={() => dispatch(setSwitchEvents("my"))}
-                            />
+                            >{switchEvents == "my" ? getName(me) : null}</Button>
                     }
 
                     {/* <Button
