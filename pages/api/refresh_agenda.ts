@@ -76,6 +76,7 @@ export default async function handler(req: any, res: any) {
             slots: () => api.get('/me/slots', { params: { 'page[size]': '100' } }),
             defancesHistory: () => api.get(`/users/${id}/scale_teams/as_corrected`), 
             campusEvents: () => api.get('/campus/' + campusId + '/events', { params: { sort: '-created_at', 'page[size]': '100' } }),
+            locations: () => api.get(`users/${id}/locations`, { params: { 'page[size]': '100' } }),
         };
 
         // Execute all requests concurrently

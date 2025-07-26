@@ -9,7 +9,7 @@ import { getNextEvaluation } from "../common/function/getNextEvaluation";
 import { getGenderOfUser, getUserFriends, getUserSettings, getUserWavingHand } from "../common/function/getUserSettings";
 import { preparationSlots } from "../common/function/preparationSlots";
 import { setUser } from "../store/slices/userSlice";
-import { setAllEvents, setEvents } from "../store/slices/eventsSlice";
+import { setAllEvents, setEvents, setLocations } from "../store/slices/eventsSlice";
 import { setUnitType } from "../store/slices/calendarSlice";
 import ThemeContext from "../context/themeContext";
 
@@ -45,7 +45,7 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             }
 
             // Update Redux store in a single batch to minimize re-renders
-
+            console.log("locations", res.locations);
             const settingsData = await getUserSettings(me.id);
             const friendsData = await getUserFriends(me.id);
             const wavingHandData = await getUserWavingHand(me.id);
@@ -67,6 +67,7 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             res.defancesHistory && dispatch(setDefancesHistory(res.defancesHistory));
             res.events && dispatch(setEvents(res.events));
             res.campusEvents && dispatch(setAllEvents(res.campusEvents));
+            res.locations && dispatch(setLocations(res.locations));
 
             dispatch(setUnitType(viewModeStatus));
         } catch (error) {

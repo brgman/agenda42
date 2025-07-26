@@ -3,7 +3,7 @@ import { useRef, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { setEvals } from "../store/slices/evalsSlice";
 import { setOriginalSlots, setSlots, setDefances, setDefancesHistory } from "../store/slices/slotsSlice";
-import { setEvents } from "../store/slices/eventsSlice";
+import { setEvents, setLocations } from "../store/slices/eventsSlice";
 
 export const useRefreshFriends = (id: any, token: any, setLoad: any) => {
     const dispatch = useDispatch();
@@ -46,6 +46,8 @@ export const useRefreshFriends = (id: any, token: any, setLoad: any) => {
             
             if (res.defancesHistory)
                 dispatch(setDefancesHistory(res.defancesHistory));
+            if (res.locations)
+                dispatch(setLocations(res.locations));
         } catch (error) {
             console.error('Refresh Agenda Error:', error);
             // Optionally rethrow or handle error for UI feedback
