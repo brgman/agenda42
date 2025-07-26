@@ -28,10 +28,10 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
         try {
             setLoad(true);
             dispatch(setUser(me));
-            const genderData = await getGenderOfUser(me.login);
+            const genderData = await getGenderOfUser(me.login, me.id);
             console.log("genderData", genderData)
             dispatch(setGender(genderData));
-            if (genderData.status == "NOT_FOUND")
+            if (genderData.status == "NOT_FOUND" || genderData.status == "Forbidden")
                 return;
 
             const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=1`, {
@@ -43,7 +43,7 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             if (!response.ok) {
                 throw new Error(`Failed to refresh agenda: ${res.message || response.status}`);
             }
-            
+
             const settingsData = await getUserSettings(me.id);
             const friendsData = await getUserFriends(me.id, token);
             const wavingHandData = await getUserWavingHand(me.id);
