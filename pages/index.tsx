@@ -84,6 +84,7 @@ const Index: NextPage = ({ token, me }: any) => {
   const eventItem = useSelector((state: RootState) => state.calendar.eventActive);
   const toggleInfoEventCanvas = useSelector((state: RootState) => state.calendar.canvasIsOpen);
   const gender = useSelector((state: RootState) => state.settings.gender);
+  const locations = useSelector((state: RootState) => state.events.locations);
 
   const [date, setDate] = useState(new Date());
   const [eventAdding, setEventAdding] = useState(false);
@@ -99,7 +100,7 @@ const Index: NextPage = ({ token, me }: any) => {
     return () => clearInterval(update);
   }, [refreshAgenda]);
 
-  useParsingEvents(eventsIntra, slotsIntra, defances, defancesHistory, me, setEvents, setEventsActive);
+  useParsingEvents(eventsIntra, slotsIntra, defances, defancesHistory, me, setEvents, setEventsActive, locations);
   useSwitchEvents(events, allEvents, setEventsActive);
   useNotification(events, notify, settings);
 
@@ -245,7 +246,7 @@ const Index: NextPage = ({ token, me }: any) => {
   }, [eventAdding]);
 
   const eventStyleGetter = (
-    event: { color?: TColor },
+    event: { color?: TColor, scale_team?: any },
     start: any,
     end: any,
     // isSelected: boolean,
@@ -258,7 +259,7 @@ const Index: NextPage = ({ token, me }: any) => {
       className: classNames({
         [`bg-l${darkModeStatus ? "o25" : "10"}-${color} text-${color}`]: color,
         "border border-success": isActiveEvent,
-        [`bg-l${darkModeStatus ? "o25" : "10"}-${darkModeStatus ? "light" : "dark"} text-${color}`]: isPastEvent,
+        [`bg-l${darkModeStatus ? "o25" : "10"}-${darkModeStatus ? "light" : "dark"} text-${color}`]: isPastEvent && (event.scale_team !== 'locations'),
         "isDraggable": event.isDraggable && !isPastEvent,
         "nonDraggable": !event.isDraggable || isPastEvent,
       }),

@@ -19,6 +19,7 @@ const useParsingEvents = (
     me: any,
     setEvents: any,         // TODO: safe setSwitchEvents in the store
     setEventsActive: any,   // TODO: safe setEvents in the store
+    locations: any,
 ) => {
     useEffect(() => {
         if (eventsIntra && slotsIntra && defances && defancesHistory) {
@@ -96,7 +97,15 @@ const useParsingEvents = (
                     type: "defances",
                     isDraggable: false
                 }));
-            setEvents([...eventList, ...slotsList, ...defancesList]);
+            const locationsList = locations.map((event: any) => ({
+                id: event.id,
+                name: `Host: ${event.host} (${dayjs(event["end_at"]).diff(dayjs(event["begin_at"]), 'minutes', false)} min.)`,
+                start: dayjs(event["begin_at"]).toDate(),
+                end: dayjs(event["end_at"]).toDate(),
+                color: "success",
+                scale_team: "locations",
+            })) || [];
+            setEvents([...eventList, ...slotsList, ...defancesList, ...locationsList]);
             setEventsActive([...eventList, ...slotsList, ...defancesList]);
         }
     }, [eventsIntra, slotsIntra, defances, defancesHistory]);

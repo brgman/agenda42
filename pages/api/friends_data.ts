@@ -1,6 +1,5 @@
 import axios, { AxiosError } from 'axios';
 
-// Constants
 const BASE_URL = 'https://api.intra.42.fr/v2';
 const RETRY_CONFIG = {
     maxRetries: 3,
@@ -8,11 +7,15 @@ const RETRY_CONFIG = {
     maxDelayMs: 10000,
 } as const;
 
+interface ApiResponse<T> {
+    data: T;
+    status: number;
+}
+
 interface CookieObject {
     [key: string]: string;
 }
 
-// Utility Functions
 const parseCookies = (cookieString: string): CookieObject =>
     Object.fromEntries(cookieString.split('; ').map(c => c.split('=')));
 
@@ -50,7 +53,6 @@ export const createApiClient = (token: string) => {
     return instance;
 };
 
-// Main Handler
 export default async function handler(req: any, res: any) {
     try {
         const { id } = req.query;
@@ -63,14 +65,17 @@ export default async function handler(req: any, res: any) {
 
         const api = createApiClient(token);
 
-        // API endpoints and their transformations
         const requests = {
-            events: () => api.get(`/users/${id}/events_users`, { params: { 'page[size]': '100' } }),
-            defancesHistory: () => api.get(`/users/${id}/scale_teams/as_corrected`),
-            evaluations: () => api.get(`/users/${id}/scale_teams/as_corrector`),
-            locations: () => api.get(`users/${id}/locations`, { params: { 'page[size]': '100' } }),
-        };
+            correction_point_historics: () => api.get(`users/${id}/correction_point_historics`),
+            coalitions: () => api.get(`/users/${id}/coalitions`),
+            expertises_users: () => api.get(`/users/${id}/expertises_users`),
+            groups: () => api.get(`/users/${id}/groups`),
+            groups_users: () => api.get(`/users/${id}/groups_users`),
+            projects_users: () => api.get(`/users/${id}/projects_users`),
+            teams: () => api.get(`/users/${id}/teams`),
 
+        };
+        
         const results = await Promise.all(
             Object.entries(requests).map(async ([key, request]) => {
                 const response = await request();
@@ -78,7 +83,6 @@ export default async function handler(req: any, res: any) {
             })
         );
 
-        // Transform results into response object
         const responseData = Object.fromEntries([
             ...results,
             ['cookies', cookies]

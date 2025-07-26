@@ -11,6 +11,7 @@ import Badge from "../bootstrap/Badge";
 import useDarkMode from "../../hooks/useDarkMode";
 import { addFriendToPinList, removeFriendFromList, removeFriendFromPinList } from "../../store/slices/friendsReducer";
 import Icon from "../icon/Icon";
+import { LoadFriendInformation } from "../agenda/LoadFriendInformation";
 
 const Friends: FC<any> = ({ token }: any) => {
     const friendsIsOpen = useSelector((state: RootState) => state.settings.friendsIsOpen);
@@ -137,6 +138,7 @@ const Friends: FC<any> = ({ token }: any) => {
 
                                     {user?.friend_image && <Avatar className="avatar-abs" src={user?.friend_image} size={64} />}
                                 </CardHeader>
+                                {isPined && <LoadFriendInformation setLoad={()=> {}} isPined={isPined} token={token} id={user.friend_id} />}
                                 <Button
                                     style={{ position: 'absolute', top: 5, right: 5 }}
                                     className='h4'

@@ -50,9 +50,9 @@ const nextConfig = withInterceptStdout(
           destination: "/api/refresh_agenda",
         },
         {
-          source: "/api/preview",
-          destination: "/api/preview",
-        },
+          source: "/api/friends_data",
+          destination: "/api/friends_data",
+        }
       ];
     },
     env: {
