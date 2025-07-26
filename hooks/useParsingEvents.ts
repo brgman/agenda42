@@ -1,5 +1,6 @@
 import { useEffect } from 'react'; 
 import dayjs from "dayjs";
+import { splitOvernightEvent } from '../common/function/splitOvernightEvent';
 
 export interface IEventType {
     [key: string]: string;
@@ -97,14 +98,16 @@ const useParsingEvents = (
                     type: "defances",
                     isDraggable: false
                 }));
-            const locationsList = locations.map((event: any) => ({
-                id: event.id,
-                name: `Host ${event.host}`,
-                start: dayjs(event["begin_at"]).toDate(),
-                end: dayjs(event["end_at"]).toDate(),
-                color: "success",
-                scale_team: "locations",
-            })) || [];
+            const locationsList = locations.flatMap((event: any) =>
+                splitOvernightEvent(event).map(event => ({
+                    id: event.id,
+                    name: `Host: ${event.host} (${dayjs(event.end_at).diff(dayjs(event.begin_at), 'minutes')} min.)`,
+                    start: dayjs(event.begin_at).toDate(),
+                    end: dayjs(event.end_at).toDate(),
+                    color: "success",
+                    scale_team: "locations",
+                }))
+            ) || [];
             setEvents([...eventList, ...slotsList, ...defancesList, ...locationsList]);
             setEventsActive([...eventList, ...slotsList, ...defancesList]);
         }

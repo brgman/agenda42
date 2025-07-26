@@ -103,7 +103,7 @@ const Friends: FC<any> = ({ token }: any) => {
                         const isIdInSuccess = success && success.includes(user.id);
                         const isPined = pins.includes(user.friend_id);
                         return (
-                            <Card isCompact key={key} style={{ paddingBottom: 12 }} >
+                            <Card isCompact key={user.id} style={{ paddingBottom: 12 }} >
                                 <CardHeader style={{ borderRadius: 20 }} >
                                     <CardLabel>
                                         <CardTitle>
