@@ -49,7 +49,6 @@ import Piscine from "../components/piscine";
 import Friends from "../components/friends";
 import WavingHand from "../components/waving_hand";
 import GenderModal from "../components/GenderModal";
-import { encrypt } from "../lib/encryption";
 
 axiosRetry(axios, {
   retries: 3,
@@ -482,7 +481,6 @@ export async function getServerSideProps({ req, locale, res }: any) {
     }).toString();
 
   if (!token) {
-    console.log("No token, redirecting to:", authUrl);
     return {
       redirect: { destination: authUrl, permanent: false },
     };
@@ -497,25 +495,16 @@ export async function getServerSideProps({ req, locale, res }: any) {
   });
 
   if (isExpired) {
-    console.log("Token expired, redirecting to:", authUrl);
     return {
       redirect: { destination: authUrl, permanent: false },
     };
   }
 
   try {
-    console.log("Fetching user data with token:", token);
     const response = await axios.get("https://api.intra.42.fr/v2/me", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    const encryptedId = encrypt(response.data.id);
-
-    res.setHeader("Set-Cookie", [
-      `encrypted_id=${encryptedId}; Path=/; HttpOnly; SameSite=Strict`,
-    ]);
-
-    console.log("User data fetched:", response.data.login);
     return {
       props: {
         token,
@@ -523,7 +512,6 @@ export async function getServerSideProps({ req, locale, res }: any) {
       },
     };
   } catch (error: any) {
-    console.error("API error:", error);
     return {
       redirect: { destination: authUrl, permanent: false },
     };
