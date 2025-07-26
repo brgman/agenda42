@@ -23,7 +23,7 @@ export default async function getVerifyTokenInfo(req: any, res: any) {
         console.log("query", req.query["user_id"]);
         console.log("body ", req.body["user_id"]);
 
-        if ((req.method === "POST" || req.method === "DELETE") && req.body["user_id"] !== isAuth.data?.resource_owner_id.toString())
+        if ((req.method === "POST" || req.method === "DELETE") && req.body["user_id"] !== isAuth.data?.resource_owner_id)
             return res.status(401).json({ status: "Forbidden" });
 
         if ((req.method === "GET" || req.method === "PATH") && req.query["user_id"] !== isAuth.data?.resource_owner_id.toString())

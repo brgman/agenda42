@@ -131,7 +131,8 @@ const Piscine: FC<any> = ({ token }: any) => {
                 status,
                 author_image_url,
                 author_name,
-                author_login
+                author_login,
+                user_id: me.id,
             }),
         }).then(async (response) => {
             setUpdate(false);

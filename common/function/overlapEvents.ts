@@ -14,7 +14,7 @@ function isOverlappingAndFutureOrToday(event1: Event, event2: Event): boolean {
         event1.start < event2.end &&
         event2.start < event1.end &&
         isFutureOrToday &&
-        (event1.scale_team !== 'location' || event2.scale_team !== 'location')
+        (event1.scale_team !== 'locations' && event2.scale_team !== 'locations')
     );
 }
 
