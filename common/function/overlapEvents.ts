@@ -1,6 +1,7 @@
 interface Event {
     start: Date;
     end: Date;
+    scale_team: string;
 }
 
 function isOverlappingAndFutureOrToday(event1: Event, event2: Event): boolean {
@@ -12,7 +13,8 @@ function isOverlappingAndFutureOrToday(event1: Event, event2: Event): boolean {
     return (
         event1.start < event2.end &&
         event2.start < event1.end &&
-        isFutureOrToday
+        isFutureOrToday &&
+        (event1.scale_team !== 'location' || event2.scale_team !== 'location')
     );
 }
 
