@@ -57,7 +57,7 @@ export const LoadFriendInformation = ({ setLoad, isPined, token = null, id }: { 
 						</tr>
 					</thead>
 					<tbody>
-						{data?.projects_users.filter(i => (i.cursus_ids == 21)).map((item) => (
+						{data?.projects_users.map((item) => (
 							<tr key={item.id}>
 								<td>{item.project.name}</td>
 								<td>{item.status}</td>
