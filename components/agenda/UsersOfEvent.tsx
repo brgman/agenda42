@@ -79,7 +79,6 @@ const UsersOfEvent = ({ desc, myId, id, token, eventTitle }: any) => {
                     author_image_url, 
                     author_name, 
                     author_login,
-                    allow_id: me.id
                 }),
             }).then(async (response) => {
                 setUpdate(false);

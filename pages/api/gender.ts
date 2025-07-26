@@ -30,8 +30,9 @@ export default async function handler(req, res) {
         const { user_id } = req.query;
         try {
             // Retrieve gender record by user_id
+            const numericUserId = parseInt(user_id, 10);
             const checkStmt = db.prepare('SELECT * FROM gender WHERE user_id = ?');
-            const existingRecord = checkStmt.get(user_id);
+            const existingRecord = checkStmt.get(numericUserId);
 
             if (!existingRecord) {
                 return res.status(404).json({
