@@ -28,12 +28,10 @@ export default async function handler(req, res) {
         }
     } else if (req.method === "GET") {
         const { user_id } = req.query;
-        console.log("user_id !", user_id)
         try {
             // Retrieve gender record by user_id
             const checkStmt = db.prepare('SELECT * FROM gender WHERE user_id = ?');
             const existingRecord = checkStmt.get(user_id);
-            console.log("existingRecord:", existingRecord);
 
             if (!existingRecord) {
                 return res.status(404).json({
