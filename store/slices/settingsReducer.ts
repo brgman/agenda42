@@ -9,6 +9,7 @@ interface UserState {
     wavingHandIsOpen: boolean;
     settingsLoaded: any;
     gender: string;
+    waving_not_read: number;
 }
 
 const initialState: UserState = {
@@ -19,7 +20,8 @@ const initialState: UserState = {
     piscineIsOpen: false,
     wavingHandIsOpen: false,
     settingsLoaded: null,
-    gender: "null"
+    gender: "null",
+    waving_not_read: 0,
 };
 
 const userSlice = createSlice({
@@ -47,8 +49,11 @@ const userSlice = createSlice({
         setGender(state, action: PayloadAction<any>) {
             state.gender = action.payload.data;
         },
+        setNotReadedWaving(state, action: PayloadAction<any>) {
+            state.waving_not_read = action.payload;
+        },
     },
 });
 
-export const { setSlotsMod, setModalPiscineStatus, setModalSettingsStatus, setModalFriendsStatus, setModalWavingHandStatus, setSavedSettings, setGender } = userSlice.actions;
+export const { setNotReadedWaving, setSlotsMod, setModalPiscineStatus, setModalSettingsStatus, setModalFriendsStatus, setModalWavingHandStatus, setSavedSettings, setGender } = userSlice.actions;
 export default userSlice.reducer;

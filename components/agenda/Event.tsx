@@ -125,21 +125,18 @@ const Event = ({ eventItem }: any) => {
                                 ?
                                 <Button
                                     color="light"
-                                    type="submit"
                                     onClick={() => unsubscribeHandler(eventItem)}
                                 >View in intra
                                 </Button>
                                 : (eventItem.max_people != eventItem.nbr_subscribers) ?
                                     <Button
                                         color="storybook"
-                                        type="submit"
                                         onClick={() => unsubscribeHandler(eventItem)}
                                     >Open event in Intra
                                     </Button>
                                     : (eventItem.max_people == eventItem.nbr_subscribers) ?
                                         < Button
                                             color="danger"
-                                            type="submit"
                                             onClick={() => unsubscribeHandler(eventItem)}
                                         >
                                             Waitlist is available ?
@@ -147,7 +144,6 @@ const Event = ({ eventItem }: any) => {
                                         :
                                         <Button
                                             color="success"
-                                            type="submit"
                                         >
                                             Save to agenda
                                         </Button>

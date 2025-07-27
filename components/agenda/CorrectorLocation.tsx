@@ -26,7 +26,6 @@ export const CorrectorLocation = ({ id, token = null, user = null }: { id: any; 
                     <Button
                         style={btnStyle}
                         color="storybook"
-                        type="submit"
                         icon="Link"
                         onClick={() => {
                             window.open(getLinkForFriends42(user), '_blank');
@@ -35,7 +34,6 @@ export const CorrectorLocation = ({ id, token = null, user = null }: { id: any; 
                 ) : (
                     <Button
                         isDisable
-                        type="submit"
                         onClick={() => { }}
                     >
                             {user?.id ? "Unavailable" : "Reload..."}

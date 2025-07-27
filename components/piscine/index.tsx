@@ -247,7 +247,6 @@ const Piscine: FC<any> = ({ token }: any) => {
                                                         icon={update ? "Refresh" : (isFriend || isIdInSuccess) ? "Group" : "Add"}
                                                         color={(isIdInSuccess || isFriend) ? "success" : "light"}
                                                         isDisable={update || isFriend}
-                                                        type="submit"
                                                         onClick={() => addFriendHandler(user.id, user.login, getName(user), user.image.versions.medium, user.pool_month, user.pool_year)}
                                                     />
                                                     <Button
@@ -255,7 +254,6 @@ const Piscine: FC<any> = ({ token }: any) => {
                                                         className='h4'
                                                         icon="Link"
                                                         color="light"
-                                                        type="submit"
                                                         onClick={() => userInIntraHandler(user.id)}
                                                     >
                                                     </Button>

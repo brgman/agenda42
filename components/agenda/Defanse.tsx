@@ -195,7 +195,7 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                                             </p>
                                             <div className="df">
                                                 {
-                                                    i == 0
+                                                    i == 0 && eventItem?.scale_team?.correcteds.length > 1
                                                         ? <Button
                                                             color="info"
                                                             icon="Link"
