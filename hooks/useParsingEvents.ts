@@ -103,7 +103,7 @@ const useParsingEvents = (
                     id: event.id,
                     name: event.host,
                     start: dayjs(event.begin_at).toDate(),
-                    end: dayjs(event.end_at).toDate(),
+                    end: event.end_at ? dayjs(event.end_at).toDate() : dayjs(new Date()).toDate(), 
                     color: "success",
                     scale_team: "locations",
                 }))
