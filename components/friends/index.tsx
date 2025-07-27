@@ -102,9 +102,11 @@ const Friends: FC<any> = ({ token }: any) => {
                     pinSort(alphabeticSort(users, "friend_login"), pins).map((user, key) => {
                         const isIdInSuccess = success && success.includes(user.id);
                         const isPined = pins.includes(user.friend_id);
+                        const [languages, setLanguages] = useState();
+                        const [color, setColor] = useState();
                         return (
-                            <Card isCompact key={user.id} style={{ paddingBottom: 12 }} >
-                                <CardHeader style={{ borderRadius: 20 }} >
+                            <Card borderSize={1} isCompact key={user.id} style={color ? { paddingBottom: 12, backgroundColor: color, transition: "all .5s ease-in-out", } : {}} >
+                                <CardHeader style={{ borderRadius: 20, backgroundColor: 'transparent' }} >
                                     <CardLabel>
                                         <CardTitle>
                                             <Button
@@ -115,6 +117,7 @@ const Friends: FC<any> = ({ token }: any) => {
                                                 isDisable={update}
                                                 onClick={() => removeFriendHandler(user.friend_id)}
                                             />
+                                            {languages}
                                             <span style={{ marginRight: 10 }}>{user.friend_name}</span>
                                             <br />
                                             <Badge
@@ -137,7 +140,10 @@ const Friends: FC<any> = ({ token }: any) => {
 
                                     {user?.friend_image && <Avatar className="avatar-abs" src={user?.friend_image} size={64} />}
                                 </CardHeader>
-                                <LoadFriendInformation setLoad={()=> {}} isPined={isPined} token={token} id={user.friend_id} />
+                                <LoadFriendInformation 
+                                color={color}
+                                languages={languages}
+                                setColor={setColor} setLanguages={setLanguages} setLoad={()=> {}} isPined={isPined} token={token} id={user.friend_id} />
                                 <Button
                                     style={{ position: 'absolute', top: 5, right: 5 }}
                                     className='h4'

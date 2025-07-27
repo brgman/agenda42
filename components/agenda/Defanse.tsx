@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 import { getCalcGiveup } from '../../common/function/getCalcGiveup';
 import { getCorrectorImageUrl, getCorrectorName } from '../../common/function/getCorrectorImageUrl';
@@ -10,6 +10,7 @@ import Progress from '../bootstrap/Progress';
 import Spinner from '../bootstrap/Spinner';
 import { CorrectorLocation } from './CorrectorLocation';
 import Icon from '../icon/Icon';
+import AddFriendButton from './AddFriendButton';
 
 interface Profile {
     id: number;
@@ -22,7 +23,6 @@ interface Profile {
     };
     location?: string;
 }
-
 interface ScaleTeam {
     corrector: Profile | string;
     correcteds: Profile[];
@@ -59,13 +59,24 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
     const [userData, setUserData] = useState<Profile | null>(null);
     const [correctedsData, setCorrectedsData] = useState<Profile[]>([]);
     const [loading, setLoading] = useState(true);
+    const [update, setUpdate] = useState(false);
+    const [success, setSuccess] = useState<number[]>([]);
     const [error, setError] = useState<string | null>(null);
 
+    const isFetching = useRef(false);
+
     useEffect(() => {
+        if (!eventItem?.scale_team?.corrector || isFetching.current) {
+            setLoading(false);
+            return;
+        }
+
         const fetchData = async () => {
+            if (isFetching.current) return;
+            isFetching.current = true;
+
             try {
                 setLoading(true);
-                // Fetch corrector data
                 let correctorData: Profile | null = null;
                 if (eventItem?.scale_team?.corrector !== 'invisible') {
                     correctorData = await fetchUserWithRetry(eventItem?.scale_team?.corrector.id, 3, token, false);
@@ -81,16 +92,12 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                 setError('Failed to fetch data');
             } finally {
                 setLoading(false);
+                isFetching.current = false;
             }
         };
 
-        if (eventItem?.scale_team?.corrector) {
-            fetchData();
-        } else {
-            setLoading(false);
-        }
-    }, [eventItem, token]);
-
+        fetchData();
+    }, [eventItem?.scale_team?.corrector?.id, token]);    
 
     if (loading) {
         return (
@@ -119,15 +126,20 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                                         {dayjs(eventItem?.scale_team.updated_at).format('dddd, D MMMM H:mm')}
                                     </p>
                                     <div className="df">
+                                        <AddFriendButton
+                                            isIdInSuccess={success?.length}
+                                            update={update}
+                                            setUpdate={setUpdate}
+                                            setSuccess={setSuccess}
+                                            user={userData}
+                                        />
                                         <Button
                                             icon="Link"
                                             style={{ marginRight: 15 }}
-                                            color="success"
+                                            color="light"
                                             onClick={() => window.open(`https://profile.intra.42.fr/users/${userData.id}`, '_blank')}
-                                        >
-                                            Intra
-                                        </Button>
-                                        <CorrectorLocation token={null} user={userData} id={userData.id} />
+                                        />
+                                        <CorrectorLocation user={userData} />
                                     </div>
                                 </CardLabel>
                                 <Avatar

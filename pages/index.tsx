@@ -23,10 +23,8 @@ import axios from "axios";
 import utc from "dayjs/plugin/utc";
 import "dayjs/locale/fr";
 import showNotification from "../components/extras/showNotification";
-import { setDefances, setOriginalSlots, setScaleTeams, setSlots } from "../store/slices/slotsSlice";
+import { setOriginalSlots, setSlots } from "../store/slices/slotsSlice";
 import { preparationSlots } from "../common/function/preparationSlots";
-import { setEvals } from "../store/slices/evalsSlice";
-import { setEvents as setEventsRedux, setAllEvents } from '../store/slices/eventsSlice';
 import OverlappingModal from "../components/agenda/OverlappangModal";
 import Evaluation from "../components/agenda/Evaluation";
 import Event from "../components/agenda/Event";
@@ -43,15 +41,11 @@ import useParsingEvents from "../hooks/useParsingEvents";
 import useSwitchEvents from "../hooks/useSwichEvents";
 import MasterCalendar from "../components/agenda/MasterCalendar";
 import SideCalendar from "../components/agenda/SideCalendar";
-import { delay } from "../helpers/helpers";
 import axiosRetry from "axios-retry";
 import Piscine from "../components/piscine";
 import Friends from "../components/friends";
 import WavingHand from "../components/waving_hand";
 import GenderModal from "../components/GenderModal";
-import { getUserWavingHand } from "../common/function/getUserSettings";
-import { setSavedWavingHand } from "../store/slices/friendsReducer";
-import { setNotReadedWaving } from "../store/slices/settingsReducer";
 
 axiosRetry(axios, {
   retries: 3,
@@ -91,16 +85,11 @@ const Index: NextPage = ({ token, me }: any) => {
 
   const [date, setDate] = useState(new Date());
   const [eventAdding, setEventAdding] = useState(false);
-  const [refresh, setRefresh] = useState(false);
   const [events, setEvents] = useState([]);
   const [eventsActive, setEventsActive] = useState([]);
 
   useEffect(() => {
     refreshAgenda();
-    const update = setInterval(() => {
-      refreshHandler();
-    }, 60000 * 15);
-    return () => clearInterval(update);
   }, [refreshAgenda]);
 
   useParsingEvents(eventsIntra, slotsIntra, defances, defancesHistory, me, setEvents, setEventsActive, locations);
@@ -112,82 +101,6 @@ const Index: NextPage = ({ token, me }: any) => {
 
   // View modes; Month, Week, Work Week, Day and Agenda
   const views = getViews();
-
-  const refreshHandler = async () => {
-    const maxRetries = 3; // Maximum number of retry attempts
-    let retryCount = 0;
-
-    function getActiveIds(array: any) {
-      return array.filter(item => item.active === true).map(item => item.id);
-    }
-
-    const attemptRefresh = async () => {
-      setRefresh(true);
-      try {
-        const res = await fetch(
-          "/api/refresh_agenda?id=" + me.id + `&campusId=${getActiveIds(me.campus)}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        const response = await res.json();
-
-
-        const wavingHandData = await getUserWavingHand(me.id);
-        const wavingNotRead = wavingHandData?.data.filter(i => i.status === "send").length || 0;
-        dispatch(setNotReadedWaving(wavingNotRead));
-        dispatch(setSavedWavingHand(wavingHandData));
-
-        if (res.ok) {
-          // Success case
-          if (response.evaluations) {
-            dispatch(setEvals(response.evaluations));
-            dispatch(setDefances(response.evaluations));
-          }
-          if (response.slots) {
-            dispatch(setOriginalSlots(response.slots));
-            dispatch(setSlots(preparationSlots(response.slots)));
-          }
-          if (response.events)
-            dispatch(setEventsRedux(response.events));
-
-          showNotification(
-            <span className='d-flex align-items-center'>
-              <Icon
-                icon='Info'
-                size='lg'
-                className='me-1'
-              />
-              <span>Updated Successfully</span>
-            </span>,
-            'Agenda updated',
-            'success'
-          );
-        } else if (res.status === 429 && retryCount < maxRetries) {
-          // Handle 429 error with retry
-          retryCount++;
-          const retryAfter = res.headers.get('Retry-After')
-            ? parseInt(res.headers.get('Retry-After')) * 1000
-            : 5000 * retryCount; // Default to 5s, 10s, 15s
-
-          console.log(`Rate limited. Retrying after ${retryAfter / 1000} seconds...`);
-          await delay(retryAfter);
-          return await attemptRefresh(); // Recursive retry
-        } else {
-          // Other errors or max retries reached
-          location?.reload();
-        }
-      } catch (error) {
-        console.error('Refresh failed:', error);
-        location?.reload();
-      }
-      setRefresh(false);
-      await delay(3000);
-    };
-
-    await attemptRefresh();
-  };
 
   const handleSelect = async ({ start, end }: { start: any; end: any }) => {
     console.log("handleSelect")
@@ -410,8 +323,7 @@ const Index: NextPage = ({ token, me }: any) => {
               date={date}
               setDate={setDate}
               viewMode={viewMode}
-              refresh={refresh}
-              refreshHandler={refreshHandler}
+              refreshHandler={refreshAgenda}
               eventsActive={eventsActive}
               views={views}
               moveEvent={moveEvent}

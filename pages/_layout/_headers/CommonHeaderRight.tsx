@@ -129,7 +129,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 						>
 							<Icon
 								icon={darkModeStatus ? 'Water' : 'Water'}
-								color={darkModeStatus ? 'light' : 'info'}
+								color={darkModeStatus ? 'light' : 'primary'}
 								className='btn-icon'
 							/>
 						</Button>
