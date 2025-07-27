@@ -2,14 +2,14 @@
 import { useRef, useCallback, useContext } from "react";
 import { useDispatch } from "react-redux";
 import { setEvals } from "../store/slices/evalsSlice";
-import { setGender, setSavedSettings } from "../store/slices/settingsReducer";
+import { setGender, setNotReadedWaving, setSavedSettings } from "../store/slices/settingsReducer";
 import { setSavedFriends, setSavedWavingHand } from "../store/slices/friendsReducer";
 import { setOriginalSlots, setSlots, setDefances, setDefancesHistory } from "../store/slices/slotsSlice";
 import { getNextEvaluation } from "../common/function/getNextEvaluation";
 import { getGenderOfUser, getUserFriends, getUserSettings, getUserWavingHand } from "../common/function/getUserSettings";
 import { preparationSlots } from "../common/function/preparationSlots";
 import { setUser } from "../store/slices/userSlice";
-import { setAllEvents, setEvents, setLocations } from "../store/slices/eventsSlice";
+import { setAllEvents, setEvents, setExams, setLocations } from "../store/slices/eventsSlice";
 import { setUnitType } from "../store/slices/calendarSlice";
 import ThemeContext from "../context/themeContext";
 
@@ -33,8 +33,9 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             dispatch(setGender(genderData));
             if (genderData.status == "NOT_FOUND" || genderData.status == "Forbidden")
                 return;
-
-            const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=1`, {
+            const {cursus_id} = me.cursus_users.filter(i => i.end_at == null)[0];
+            const { id } = me.campus.filter(i => i.active)[0];
+            const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 cache: 'no-store', // Prevent stale data if needed
             });
@@ -45,10 +46,12 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             }
 
             const settingsData = await getUserSettings(me.id);
-            const friendsData = await getUserFriends(me.id, token);
-            const wavingHandData = await getUserWavingHand(me.id);
             dispatch(setSavedSettings(settingsData));
+            const friendsData = await getUserFriends(me.id, token);
             dispatch(setSavedFriends(friendsData));
+            const wavingHandData = await getUserWavingHand(me.id);
+            const wavingNotRead = wavingHandData?.data.filter(i => i.status === "send").length || 0;
+            dispatch(setNotReadedWaving(wavingNotRead));
             dispatch(setSavedWavingHand(wavingHandData));
 
             if (res.slots) {
@@ -66,6 +69,7 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             res.events && dispatch(setEvents(res.events));
             res.campusEvents && dispatch(setAllEvents(res.campusEvents));
             res.locations && dispatch(setLocations(res.locations));
+            res.exams && dispatch(setExams(res.exams));
 
             dispatch(setUnitType(viewModeStatus));
         } catch (error) {

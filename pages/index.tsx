@@ -49,6 +49,9 @@ import Piscine from "../components/piscine";
 import Friends from "../components/friends";
 import WavingHand from "../components/waving_hand";
 import GenderModal from "../components/GenderModal";
+import { getUserWavingHand } from "../common/function/getUserSettings";
+import { setSavedWavingHand } from "../store/slices/friendsReducer";
+import { setNotReadedWaving } from "../store/slices/settingsReducer";
 
 axiosRetry(axios, {
   retries: 3,
@@ -130,6 +133,12 @@ const Index: NextPage = ({ token, me }: any) => {
 
         const response = await res.json();
 
+
+        const wavingHandData = await getUserWavingHand(me.id);
+        const wavingNotRead = wavingHandData?.data.filter(i => i.status === "send").length || 0;
+        dispatch(setNotReadedWaving(wavingNotRead));
+        dispatch(setSavedWavingHand(wavingHandData));
+
         if (res.ok) {
           // Success case
           if (response.evaluations) {
@@ -152,7 +161,7 @@ const Index: NextPage = ({ token, me }: any) => {
               />
               <span>Updated Successfully</span>
             </span>,
-            'Agenda update',
+            'Agenda updated',
             'success'
           );
         } else if (res.status === 429 && retryCount < maxRetries) {

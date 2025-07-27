@@ -35,7 +35,7 @@ export const createApiClient = (token: string) => {
             Authorization: `Bearer ${token}`,
             'Accept': 'application/json',
         },
-        timeout: 5000,
+        timeout: 15000,
     });
 
     instance.interceptors.response.use(
@@ -59,7 +59,7 @@ export const createApiClient = (token: string) => {
 // Main Handler
 export default async function handler(req: any, res: any) {
     try {
-        const { id, campusId } = req.query;
+        const { id, campusId, cursusId } = req.query;
         const cookies = parseCookies(req.headers.cookie || '');
         const token = cookies.token;
 
@@ -77,6 +77,8 @@ export default async function handler(req: any, res: any) {
             defancesHistory: () => api.get(`/users/${id}/scale_teams/as_corrected`), 
             campusEvents: () => api.get('/campus/' + campusId + '/events', { params: { sort: '-created_at', 'page[size]': '100' } }),
             locations: () => api.get(`users/${id}/locations`, { params: { 'page[size]': '100' } }),
+            // exams: () => api.get(`/cursus/${cursusId}/projects`, { params: { 'filter[id]': '1320,1321,1322,1323,1324' } }),
+            // achievements: () => api.get('/achievements_users')
         };
 
         // Execute all requests concurrently

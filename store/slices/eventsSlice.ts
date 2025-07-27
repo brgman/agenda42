@@ -4,6 +4,7 @@ interface EventsState {
     events: any | null; // Replace `any` with a proper type for your user data if available
     all: any | null;
     locations: any | null;
+    exams: any | null;
     loading: boolean;
     error: string | null;
 }
@@ -12,6 +13,7 @@ const initialState: EventsState = {
     events: null,
     all: null,
     locations: null,
+    exams: null,
     loading: false,
     error: null,
 };
@@ -34,6 +36,9 @@ const eventsSlice = createSlice({
         setLocations(state, action: PayloadAction<any>) {
             state.locations = action.payload;
         },
+        setExams(state, action: PayloadAction<any>) {
+            state.exams = action.payload;
+        },
         setLoading(state) {
             state.loading = true;
             state.error = null;
@@ -45,5 +50,5 @@ const eventsSlice = createSlice({
     },
 });
 
-export const { setEvents, setAllEvents, setLoading, setError, setLocations } = eventsSlice.actions;
+export const { setEvents, setAllEvents, setLoading, setError, setLocations, setExams } = eventsSlice.actions;
 export default eventsSlice.reducer;

@@ -38,11 +38,8 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 	const friendsIsOpen = useSelector((state: RootState) => state.settings.friendsIsOpen);
 	const wavingHandIsOpen = useSelector((state: RootState) => state.settings.wavingHandIsOpen);
 	const friends = useSelector((state: RootState) => state.friends.list);
-	const wavingList = useSelector((state: RootState) => state.friends.wavingList);
-	const wavingNotRead = wavingList?.filter(i => i.status === "send").length || 0;
+	const wavingNotRead = useSelector((state: RootState) => state.settings.waving_not_read);
 	const me = useSelector((state: RootState) => state.user.me);
-
-	console.log("wavingList", wavingList)
 
     const dispatch = useDispatch();
     const router = useRouter();

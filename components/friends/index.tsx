@@ -113,7 +113,6 @@ const Friends: FC<any> = ({ token }: any) => {
                                                 icon={update ? "Refresh" : isIdInSuccess ? "Done" : "Close"}
                                                 color={isIdInSuccess ? "success" : "light"}
                                                 isDisable={update}
-                                                type="submit"
                                                 onClick={() => removeFriendHandler(user.friend_id)}
                                             />
                                             <span style={{ marginRight: 10 }}>{user.friend_name}</span>
@@ -138,7 +137,7 @@ const Friends: FC<any> = ({ token }: any) => {
 
                                     {user?.friend_image && <Avatar className="avatar-abs" src={user?.friend_image} size={64} />}
                                 </CardHeader>
-                                {isPined && <LoadFriendInformation setLoad={()=> {}} isPined={isPined} token={token} id={user.friend_id} />}
+                                <LoadFriendInformation setLoad={()=> {}} isPined={isPined} token={token} id={user.friend_id} />
                                 <Button
                                     style={{ position: 'absolute', top: 5, right: 5 }}
                                     className='h4'

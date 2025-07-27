@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import OffCanvas, { OffCanvasHeader, OffCanvasTitle, OffCanvasBody } from "../bootstrap/OffCanvas";
 import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
-import { setModalWavingHandStatus } from "../../store/slices/settingsReducer";
+import { setModalWavingHandStatus, setNotReadedWaving } from "../../store/slices/settingsReducer";
 import { getName } from "../../helpers/helpers";
 import Card, { CardHeader, CardLabel, CardTitle } from "../bootstrap/Card";
 import Button from "../bootstrap/Button";
@@ -16,6 +16,7 @@ const WavingHand: FC<any> = ({ token }: any) => {
     const friends = useSelector((state: RootState) => state.friends.list);
     const wavingList = useSelector((state: RootState) => state.friends.wavingList);
     const wavingHandIsOpen = useSelector((state: RootState) => state.settings.wavingHandIsOpen);
+    const wavingNotRead = useSelector((state: RootState) => state.settings.waving_not_read);
 
     const me = useSelector((state: RootState) => state.user.me);
     const { darkModeStatus } = useDarkMode();
@@ -81,7 +82,10 @@ const WavingHand: FC<any> = ({ token }: any) => {
                         : <>
                             {
                                 [...wavingList].sort((a: any, b: any) => b.id - a.id).map((waving, key) => {
-                                    changeStatusHandler(waving.id);
+                                    if (waving.status == 'send') {
+                                        changeStatusHandler(waving.id);
+                                        dispatch(setNotReadedWaving(0));
+                                    }
                                     const isIdInSuccessWavingHand = successWavingHand.includes(waving.id);
                                     const isFriend = friends?.find(i => i.friend_id == waving.author_id);
                                     return (
@@ -104,7 +108,7 @@ const WavingHand: FC<any> = ({ token }: any) => {
                                                     <CardTitle>Hey, it's {waving.author_name}</CardTitle>
                                                 </CardLabel>
 
-                                                {waving.status != "read" ? <Badge color={'dark'} > not read </Badge> : null}
+                                                {(waving.status != "read") ? <Badge color={'dark'} >new</Badge> : null}
                                                 {/* <Avatar src={waving.author_image_url} size={32} /> */}
 
                                             </CardHeader>
