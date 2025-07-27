@@ -12,6 +12,7 @@ import { CorrectorLocation } from './CorrectorLocation';
 import { CorrectorLanguages, CorrectorGrades } from './CorrectorLanguages';
 import Spinner from '../bootstrap/Spinner';
 import Icon from '../icon/Icon';
+import AddFriendButton from './AddFriendButton';
 
 // Define TypeScript interfaces (optional, if using TypeScript)
 interface Profile {
@@ -45,6 +46,8 @@ const Evaluation = ({ eventItem, me, token }: EvaluationProps) => {
     const [correctedsData, setCorrectedsData] = useState<any[]>([]); // Replace `any` with proper type
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [update, setUpdate] = useState(false);
+    const [success, setSuccess] = useState<number[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -138,8 +141,12 @@ const Evaluation = ({ eventItem, me, token }: EvaluationProps) => {
             <br />
             <div className="col-12">
                 <Card className="mb-0 bg-l10-success" shadow="sm">
-                    {eventItem?.scale_team?.correcteds.map((profile: Profile, i: number) => (
-                        <CardHeader key={profile.id} className="bg-l25-success column_rest">
+                    {eventItem?.scale_team?.correcteds.map((profile: Profile, i: number) => {
+                        const isIdInSuccess = success && success.includes(profile.id);
+                        const userFromData = correctedsData.filter(i => i.id == profile.id)[0]
+
+                        return (
+                            <CardHeader key={profile.id} className="bg-l25-success column_rest">
                             <CardLabel iconColor="dark">
                                 <CardTitle>
                                     <CorrectorLanguages id={profile.id} users={correctedsData} />
@@ -155,14 +162,20 @@ const Evaluation = ({ eventItem, me, token }: EvaluationProps) => {
                                     {i === 0 ? dayjs(eventItem?.scale_team.updated_at).format('dddd, D MMMM H:mm') : null}
                                 </p>
                                 <div className="df">
+                                    <AddFriendButton
+                                        isIdInSuccess={isIdInSuccess}
+                                        update={update}
+                                        setUpdate={setUpdate}
+                                        setSuccess={setSuccess}
+                                        user={userFromData}
+                                        />
                                     <Button
+                                        icon="Link"
                                         style={{ marginRight: 15 }}
-                                        color="success"
+                                        color="light"
                                         onClick={() => window.open(`https://profile.intra.42.fr/users/${profile.id}`, '_blank')}
-                                    >
-                                        Intra
-                                    </Button>
-                                    <CorrectorLocation user={correctedsData[0]} />
+                                        />
+                                    <CorrectorLocation user={correctedsData[0]} id={undefined} token={undefined} />
                                 </div>
                             </CardLabel>
                             <Avatar
@@ -170,9 +183,11 @@ const Evaluation = ({ eventItem, me, token }: EvaluationProps) => {
                                 size={64}
                                 className="cursor-pointer"
                                 borderColor="success"
-                            />
+                                />
                         </CardHeader>
-                    ))}
+                    )}
+                    )}
+                
                     {eventItem?.scale_team?.feedback ? (
                         <CardBody>
                             <p>{eventItem?.scale_team?.feedback}</p>

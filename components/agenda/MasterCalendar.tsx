@@ -38,7 +38,6 @@ const MasterCalendar = ({
     date,
     setDate,
     viewMode,
-    refresh,
     refreshHandler,
     eventsActive,
     views,
@@ -141,21 +140,11 @@ const MasterCalendar = ({
                 >
                     <Button color={darkModeStatus ? 'dark' : 'light'} >{calendarDateLabel}</Button>
                 </Popovers>
-
-                <div style={{ margin: '0 20' }}>
-                    {
-                        (refresh)
-                            ?
-                            <div className="spinner"> <Spinner random inButton /></div>
-                            :
-                            <Button icon='Refresh' color={darkModeStatus ? 'dark' : 'light'} onClick={refreshHandler} />
-                    }
-                </div>
+                <Button icon='Refresh' color={darkModeStatus ? 'dark' : 'light'} onClick={refreshHandler} style={{ margin: '0 20px' }} />
                 <div className="switch_events">
                     <Button
                         style={{ minWidth: 50 }}
                         icon="CalendarToday"
-                        isDisable={refresh}
                         color={switchEvents == "all" ? 'primary' : darkModeStatus? 'dark': 'light' }
                         onClick={() => {
                             dispatch(setSwitchEvents("all"))
@@ -168,7 +157,6 @@ const MasterCalendar = ({
                             : <Button
                                 style={{ minWidth: 50 }}
                                 icon="FilterAlt"
-                                isDisable={refresh}
                                 color={switchEvents == "my" ? 'primary' : darkModeStatus ? 'dark': 'light' }
                                 onClick={() => dispatch(setSwitchEvents("my"))}
                             >{switchEvents == "my" ? getName(me) : null}</Button>

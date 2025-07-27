@@ -13,7 +13,7 @@ export const CorrectorGrades = ({ id, users = null }: { id: any; users: any; }) 
         users.filter((i: any) => i.id == id)[0]?.cursus_users
             ?.map((i: any) => {
                     return (
-                        <Badge color="dark" style={{ marginRight: 10, marginTop: 10 }}>
+                        <Badge key={i.cursus.name} color="dark" style={{ marginRight: 10, marginTop: 10 }}>
                             {i.cursus.name}: {i.level}
                         </Badge>)
             }
