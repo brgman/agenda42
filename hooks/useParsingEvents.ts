@@ -73,18 +73,18 @@ const useParsingEvents = (
                     isDraggable: dayjs(new Date()).isBefore(slot["end_at"]) && (slot.scale_team != "invisible")
                 })
             });
-
+            console.log("defances", defances)
             const defancesList = [...defancesHistory, ...defances]
-                .filter((i) => i.team?.project_gitlab_path?.split('/').pop()) // i.comment
-                .map((slot: any) => ({
+                .filter((i) => i.team?.project_gitlab_path?.split('/').pop() && i?.corrector?.id !== me?.id) // i.comment
+            .map((slot: any) => ({
                     id: slot.id,
                     name: `⬇️ ${slot.team?.project_gitlab_path?.split('/').pop()}`,
                     start: dayjs(slot["begin_at"]).toDate(),
                     end: dayjs(slot["begin_at"]).add(slot.scale.duration, 's').toDate(),
                     color:
-                        slot.scale_team == "invisible" || slot.scale_team?.id
-                            ? "danger"
-                            : "dark",
+                    slot.scale_team == "invisible" || slot.scale_team?.id
+                    ? "danger"
+                    : "dark",
                     user: null,
                     description: null,
                     kind: "kind",
@@ -98,6 +98,7 @@ const useParsingEvents = (
                     type: "defances",
                     isDraggable: false
                 }));
+                console.log("defancesList", defancesList);
             const locationsList = locations.flatMap((event: any) =>
                 splitOvernightEvent(event).map(event => ({
                     id: event.id,
