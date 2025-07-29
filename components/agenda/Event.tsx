@@ -11,21 +11,16 @@ import { RootState } from "../../store";
 import { TColor } from "../../type/color-type";
 import Shapes from "../shapes/Shapes";
 
-const replaceBoldInLink = (link: string) => {
-    return link.replace("**_", "").replace("_**", "")
-        .replace("_**", "").replace("**_", "")
-}
-
-function convertToMdLinks(text: string) {
-    const mdLinkPattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g; // Détecte les liens Markdown existants
-    const urlPattern = /(?<!\])(?:\*\*?_?https?:\/\/[^\s]+)(?=\S*)/; // Détecte les liens bruts sans toucher aux liens MD
-
-    return text.replace(urlPattern, (match: string) => {
-        const mdLinkCheck = new RegExp(mdLinkPattern); // Create a new instance for each check
-        if (mdLinkCheck.test(text)) return replaceBoldInLink(match); // Si c'est déjà un lien Markdown, on ne touche pas
-        const domain = replaceBoldInLink(match.replace(/https?:\/\//, "").split('/')[0]); // Extrait le domaine proprement
-        return `[${domain}](${replaceBoldInLink(match)})`;
-    });
+function parsingLiens(str: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = str.split(urlRegex);
+    return (
+        parts.map((part) =>
+                part.match(urlRegex) 
+                ? `[${part}](${part})`
+                : `${part}`
+        ).join('')
+    );
 }
 
 function getStatusColor(subscribedUsers: number, totalUsers: number): TColor | undefined {
@@ -39,7 +34,7 @@ function getStatusColor(subscribedUsers: number, totalUsers: number): TColor | u
 
 function hasBDE(eventItem: string) {
     return eventItem.includes("BDE") || eventItem.includes("IPA");
-  }
+}
 
 function getIsException(eventItem: any, gender: string) {
     return (
@@ -54,7 +49,7 @@ function getIsException(eventItem: any, gender: string) {
 }
 
 const Event = ({ eventItem }: any) => {
-    const titleForWaving = `${eventItem.name} (${eventItem.location}), start at ${dayjs(eventItem.start).format('DD MMMM H:mm') }.`;
+    const titleForWaving = `${eventItem.name} (${eventItem.location}), start at ${dayjs(eventItem.start).format('DD MMMM H:mm')}.`;
     const me = useSelector((state: RootState) => state.user.me);
     const gender = useSelector((state: RootState) => state.settings.gender?.gender);
     const isException = getIsException(eventItem, gender);
@@ -68,8 +63,8 @@ const Event = ({ eventItem }: any) => {
                 ? <>
                     <h2>{eventItem.name}</h2>
 
-                    <Card borderColor={"light"} borderSize={2} >
-                        {(eventItem.kind == "event" || hasBDE(eventItem.description)) ? <Shapes total={eventItem.nbr_subscribers * 2} /> : null }
+                    <Card borderColor={"light"} borderSize={1} >
+                        {(eventItem.kind == "event" || hasBDE(eventItem.description)) ? <Shapes total={eventItem.nbr_subscribers * 2} /> : null}
                         <CardBody>
                             <div className='row align-items-end event_row'>
                                 <div className='col-lg-6'>
@@ -150,7 +145,11 @@ const Event = ({ eventItem }: any) => {
                         }
                     </div >
 
-                    <p className="h5" style={{ overflowWrap: 'break-word' }}> <Markdown>{eventItem.description}</Markdown></p>
+                    <p className="h5" style={{ overflowWrap: 'break-word' }}>
+                        <Markdown>
+                            {parsingLiens(eventItem.description)}
+                        </Markdown>
+                    </p>
                 </>
                 : <div>You will evaluate someone at {dayjs(eventItem.slots_data[0].begin_at).format('H:mm')}</div>
             }

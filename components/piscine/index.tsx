@@ -153,7 +153,7 @@ const Piscine: FC<any> = ({ token }: any) => {
                                     const isFriend = friends?.find(i => i.friend_id == user.id);
                                     return (
                                         <Card isCompact
-                                            borderSize={2}
+                                            borderSize={1}
                                             borderColor={isFriend ? "success" : null}
                                         >
                                             <CardHeader style={{ borderRadius: 20 }} >

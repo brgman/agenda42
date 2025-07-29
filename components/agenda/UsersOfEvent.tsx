@@ -177,7 +177,7 @@ const UsersOfEvent = ({ desc, myId, id, token, eventTitle }: any) => {
                         const isFriend = friends?.find(i => i.friend_id == user.id);
                         return (
                             <Card isCompact key={key}
-                                borderSize={2}
+                                borderSize={1}
                                 borderColor={isFriend ? "success" : null}
                             >
                                 <CardHeader
