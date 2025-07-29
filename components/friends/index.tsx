@@ -144,14 +144,14 @@ const Friends: FC<any> = ({ token }: any) => {
                                 color={color}
                                 languages={languages}
                                 setColor={setColor} setLanguages={setLanguages} setLoad={()=> {}} isPined={isPined} token={token} id={user.friend_id} />
-                                <Button
+                                {/* <Button
                                     style={{ position: 'absolute', top: 5, right: 5 }}
                                     className='h4'
                                     icon="Star"
                                     color={isPined ? "warning" : "light"}
                                     isDisable={me.correction_point < pointsForPinned}
                                     onClick={() => pinFriendHandler(user.friend_id)}
-                                />
+                                /> */}
                             </Card>
                         )
                     })

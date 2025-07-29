@@ -14,37 +14,46 @@ const FocusingSelector = ({ token, setLoad, friends, me }: any) => {
     const [selected, setSelected] = useState(me.id);
     const [list, setList] = useState<any[]>();
     const refreshFriends = useRefreshFriends(selected, token, setLoad);
-    const pins = useSelector((state: RootState) => state.friends.pins);
-    const pointsForPinned = useSelector((state: RootState) => state.settings.pointsForPinned);
+    // const pins = useSelector((state: RootState) => state.friends.pins);
+    // const pointsForPinned = useSelector((state: RootState) => state.settings.pointsForPinned);
 
     useEffect(() => {
         if (selected && friends)
             refreshFriends();
     }, [refreshFriends, selected]);
 
+    // useEffect(() => {
+    //     if (pins.length && pointsForPinned <= me.correction_point) {
+    //         setList([
+    //             ...alphabeticSort(friends, "friend_login")
+    //                 // .filter(index => pins.includes(index.friend_id))
+    //                 .map(i => ({
+    //                     ...i,
+    //                     friend_id: i.friend_id | 0
+    //                 }))
+    //         ])
+    //     }
+    //     else {
+    //         if (friends.length < 15)
+    //             setList([]);
+    //         else
+    //             setList([
+    //                 ...alphabeticSort(getRandomProtection(friends), "friend_login").map(i => ({
+    //                     ...i,
+    //                     friend_id: i.friend_id | 0
+    //                 }))
+    //             ])
+    //     }
+    // }, [pins, friends]);
+
     useEffect(() => {
-        if (pins.length && pointsForPinned <= me.correction_point) {
-            setList([
-                ...alphabeticSort(friends, "friend_login")
-                    .filter(index => pins.includes(index.friend_id))
-                    .map(i => ({
-                        ...i,
-                        friend_id: i.friend_id | 0
-                    }))
-            ])
-        }
-        else {
-            if (friends.length < 15)
-                setList([]);
-            else
-                setList([
-                    ...alphabeticSort(getRandomProtection(friends), "friend_login").map(i => ({
-                        ...i,
-                        friend_id: i.friend_id | 0
-                    }))
-                ])
-        }
-    }, [pins, friends]);
+        setList([
+            ...alphabeticSort(friends, "friend_login").map(i => ({
+                ...i,
+                friend_id: i.friend_id | 0
+            }))
+        ])
+    }, [friends]);
 
     if (!friends)
         return;
@@ -57,16 +66,16 @@ const FocusingSelector = ({ token, setLoad, friends, me }: any) => {
                         {list?.find(i => (i.friend_id == selected))?.friend_name ?? getName(me)}
                     </Button>
                 </DropdownToggle>
-                <DropdownMenu >
+                <DropdownMenu style={{ height: 'auto',maxHeight: '250px',overflowX: 'hidden' }} >
                     <DropdownItem>
                         <Button
                             color="link"
-                            icon={pins.length ? "Star" : "Info"}
+                            icon="Info"
                             isDisable
                         >
                             {
-                                pins.length
-                                    ? "Your best friends"
+                                friends.length
+                                    ? "Your friends"
                                     : "Your 3 random friends"
                             }
                         </Button>
@@ -82,7 +91,7 @@ const FocusingSelector = ({ token, setLoad, friends, me }: any) => {
                             </Button>
                         </DropdownItem>
                     )) :
-                        <div style={{marginLeft: 25, marginBottom: 25, marginRight: 25}}
+                        <div style={{ marginLeft: 25, marginBottom: 25, marginRight: 25 }}
                             color="warning"
                         >You need 15 or more friends on the list to select a friend to view the agenda.</div>
                     }
