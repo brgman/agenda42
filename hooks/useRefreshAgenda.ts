@@ -12,6 +12,7 @@ import { setUser } from "../store/slices/userSlice";
 import { setAllEvents, setEvents, setExams, setLocations } from "../store/slices/eventsSlice";
 import { setUnitType } from "../store/slices/calendarSlice";
 import ThemeContext from "../context/themeContext";
+import { redirect } from "next/navigation";
 
 export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
     const { viewModeStatus } = useContext(ThemeContext);
@@ -31,8 +32,10 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             const genderData = await getGenderOfUser(me.id);
             console.log("genderData", genderData)
             dispatch(setGender(genderData));
-            if (genderData.status == "NOT_FOUND" || genderData.status == "Forbidden")
+            if (genderData.status == "NOT_FOUND")
                 return;
+            if (genderData.status == "Forbidden")
+                redirect("/auth");
             const {cursus_id} = me.cursus_users.filter(i => i.end_at == null)[0];
             const { id } = me.campus.filter(i => i.active)[0];
             const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}`, {
