@@ -134,9 +134,7 @@ const Evaluation = ({ eventItem, me, token }: EvaluationProps) => {
                             <p>{eventItem?.scale_team?.comment}</p>
                         </CardBody>
                     </Card>
-                ) : (
-                    <h4>You will evaluate</h4>
-                )}
+                ) : null}
             </div>
             <br />
             <div className="col-12">
@@ -187,13 +185,12 @@ const Evaluation = ({ eventItem, me, token }: EvaluationProps) => {
                         </CardHeader>
                     )}
                     )}
-                
                     {eventItem?.scale_team?.feedback ? (
                         <CardBody>
                             <p>{eventItem?.scale_team?.feedback}</p>
                         </CardBody>
                     ) : (
-                        <h3 className="mt-3" style={{ textAlign: 'center' }}>Waiting feedback...</h3>
+                        <p className="h5 m-3" style={{ textAlign: 'center' }}>Waiting feedback...</p>
                     )}
                 </Card>
             </div>

@@ -42,13 +42,13 @@ export const LoadFriendInformation = ({ color, languages, setColor, setLanguages
                 onClick={() => window.open(`https://profile.intra.42.fr/users/${id | 0}`, '_blank')}
             >
             </Button>
-            <Button
+            {!data && isOpen && <Button
                 icon="Download"
                 style={{ margin: '15px 15px 10px 0', zIndex: 10, position: 'absolute' }}
                 color="light"
                 onClick={() => setIsOpen(!isOpen)}
             >Fetch
-            </Button>
+            </Button>}
             {
                 (!data && isOpen)
                     ? <div className="d-flex justify-content-center m-3">
