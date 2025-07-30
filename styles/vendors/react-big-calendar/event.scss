@@ -36,6 +36,10 @@
 		// height: inherit !important; // stylelint-disable-line declaration-no-important
 		box-shadow: $box-shadow;
 	}
+
+	&.remove-time .rbc-event-label {
+		display: none;
+	}
 }
 
 .rbc-event-label {

@@ -176,7 +176,7 @@ const Index: NextPage = ({ token, me }: any) => {
   }, [eventAdding]);
 
   const eventStyleGetter = (
-    event: { color?: TColor, scale_team?: any },
+    event: { color?: TColor, scale_team?: any, kind?: any, type?: any },
     start: any,
     end: any,
     // isSelected: boolean,
@@ -192,6 +192,7 @@ const Index: NextPage = ({ token, me }: any) => {
         [`bg-l${darkModeStatus ? "o25" : "10"}-${darkModeStatus ? "light" : "dark"} text-${color}`]: isPastEvent && (event.scale_team !== 'locations'),
         "isDraggable": event.isDraggable && !isPastEvent,
         "nonDraggable": !event.isDraggable || isPastEvent,
+        "remove-time": event.scale_team == 'locations' || event.kind == 'correction' || event.type == 'defances',
       }),
     };
   };
