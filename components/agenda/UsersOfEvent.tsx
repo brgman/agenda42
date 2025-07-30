@@ -11,6 +11,7 @@ import { RootState } from "../../store";
 import useDarkMode from "../../hooks/useDarkMode";
 import Link from "next/dist/client/link";
 import { addFriendToList } from "../../store/slices/friendsReducer";
+import RandomCats from "../RandomCats";
 
 const UsersOfEvent = ({ desc, myId, id, token, eventTitle }: any) => {
     const dispatch = useDispatch();
@@ -249,7 +250,7 @@ const UsersOfEvent = ({ desc, myId, id, token, eventTitle }: any) => {
                                 onClick={() => getUsersOfEvent()}
                             >Load page {page} from {maxPage}</Button>
                         )
-                        : null}
+                        : <RandomCats /> }
                 <Button
                     color="dark"
                     isLight

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const RandomCats: React.FC = () => {
-    const isRandomlyShown = Math.random() > 0.995;
+    const isRandomlyShown = Math.random() > 0.9;
 
     if (!isRandomlyShown)
         return (null);
@@ -25,8 +25,8 @@ const RandomCats: React.FC = () => {
                     style={{
                         maxWidth: '7rem',
                         position: 'absolute',
-                        top: '-10.6rem',
-                        right: '-22.8rem',
+                        top: '42px',
+                        left: '42px',
                         zIndex: -1,
                         pointerEvents: 'none',
                     }}

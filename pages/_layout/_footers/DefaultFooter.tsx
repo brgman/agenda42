@@ -16,7 +16,6 @@ const DefaultFooter = () => {
       <div className="container-fluid">
 
         <div className="row">
-          <RandomCats />
           <div className="col m-auto">
             <Link
               href="https://42.fr/"
@@ -30,14 +29,14 @@ const DefaultFooter = () => {
           </div>
           <div className="col-auto">
             <div className="d-flex align-items-center" >
-                <div className="m-3 mb-0 mt-0">
+                {/* <div className="m-3 mb-0 mt-0">
                   <Link className="text-decoration-none text-reset" style={{zIndex: 1000}}
                     href="https://github.com/42Paris/">
                     <SvgCustomGithub className="m-1 mt-0" />
                     GitHub
                   </Link>
                 </div>
-              {/* <Link className="m-5 mb-0 mt-0 text-decoration-none text-reset text-bold" href="/changelog">
+              <Link className="m-5 mb-0 mt-0 text-decoration-none text-reset text-bold" href="/changelog">
                 Changelog
               </Link> */}
               <span>v{packageJson.version}</span>

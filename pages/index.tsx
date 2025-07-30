@@ -46,6 +46,7 @@ import Piscine from "../components/piscine";
 import Friends from "../components/friends";
 import WavingHand from "../components/waving_hand";
 import GenderModal from "../components/GenderModal";
+import { Views } from "react-big-calendar";
 
 axiosRetry(axios, {
   retries: 3,
@@ -83,7 +84,7 @@ const Index: NextPage = ({ token, me }: any) => {
   const gender = useSelector((state: RootState) => state.settings.gender);
   const locations = useSelector((state: RootState) => state.events.locations);
 
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState<Date>(new Date());
   const [eventAdding, setEventAdding] = useState(false);
   const [events, setEvents] = useState([]);
   const [eventsActive, setEventsActive] = useState([]);
@@ -91,6 +92,13 @@ const Index: NextPage = ({ token, me }: any) => {
   useEffect(() => {
     refreshAgenda();
   }, [refreshAgenda]);
+
+  useEffect(() => {
+    if (viewMode == Views.AGENDA)
+      return (setDate(dayjs().startOf('month').toDate()));
+    else
+      return setDate(new Date());
+  }, [viewMode])
 
   useParsingEvents(eventsIntra, slotsIntra, defances, defancesHistory, me, setEvents, setEventsActive, locations);
   useSwitchEvents(events, allEvents, setEventsActive);
@@ -315,7 +323,7 @@ const Index: NextPage = ({ token, me }: any) => {
               eventStyleGetter={eventStyleGetter}
               setDate={setDate}
               setUnitType={setUnitType}
-              />
+            />
           </div>
           <div className="col-xl-9 no-mobile-grid">
             <MasterCalendar
@@ -331,7 +339,7 @@ const Index: NextPage = ({ token, me }: any) => {
               eventStyleGetter={eventStyleGetter}
               token={token}
               setLoad={setLoad}
-              />
+            />
           </div>
         </div>
 
@@ -342,14 +350,14 @@ const Index: NextPage = ({ token, me }: any) => {
           }}
           isOpen={toggleInfoEventCanvas}
           titleId="canvas-title"
-          >
+        >
           <OffCanvasHeader
             setOpen={(status: boolean) => {
               dispatch(setCanvasIsOpen());
               setEventAdding(status);
             }}
             className="p-4"
-            >
+          >
             <OffCanvasTitle id="canvas-title">
               {eventAdding ? "Add Event" : ""}
             </OffCanvasTitle>
@@ -358,18 +366,18 @@ const Index: NextPage = ({ token, me }: any) => {
             tag="form"
             onSubmit={formik.handleSubmit}
             className="p-4"
-            >
+          >
             {!eventAdding ? (
               <div className="row g-4" style={{ backgroundColor: 'transparent' }}>
                 {(eventItem?.scale_team?.id && !(eventItem?.type === "defances")) ? (
                   <Evaluation token={token} eventItem={eventItem} me={me} />
                 ) :
-                (eventItem?.type === "defances")
-                ? <Defanse token={token} eventItem={eventItem} me={me} />
-                : (eventItem?.name != "Available")
-                ? <Event eventItem={eventItem} token={token} originalSlotsIntra={originalSlotsIntra} />
-                : <Slot eventItem={eventItem} token={token} originalSlotsIntra={originalSlotsIntra} />
-              }
+                  (eventItem?.type === "defances")
+                    ? <Defanse token={token} eventItem={eventItem} me={me} />
+                    : (eventItem?.name != "Available")
+                      ? <Event eventItem={eventItem} token={token} originalSlotsIntra={originalSlotsIntra} />
+                      : <Slot eventItem={eventItem} token={token} originalSlotsIntra={originalSlotsIntra} />
+                }
               </div>
             ) : (
               <div className="row g-4">{ }</div>

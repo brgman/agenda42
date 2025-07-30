@@ -46,9 +46,9 @@ const useParsingEvents = (
                     id: slot.id,
                     name:
                         slot.scale_team == "invisible"
-                            ? `⬆️ Invisible`
+                            ? `Invisible`
                             : slot.scale_team?.correcteds
-                                ? `⬆️ ${slot.scale_team?.correcteds[0].login}`
+                                ? `${slot.scale_team?.correcteds[0].login}`
                                 : "Available",
                     start: dayjs(slot["begin_at"]).toDate(),
                     end: dayjs(slot["end_at"]).toDate(),
@@ -70,7 +70,8 @@ const useParsingEvents = (
                     themes: "event.themes",
                     scale_team: slot.scale_team,
                     slots_data: slot?.slots_data,
-                    isDraggable: dayjs(new Date()).isBefore(slot["end_at"]) && (slot.scale_team != "invisible")
+                    isDraggable: dayjs(new Date()).isBefore(slot["end_at"]) && (slot.scale_team != "invisible"),
+                    icon: "Group",
                 })
             });
             console.log("defances", defances);
@@ -79,7 +80,7 @@ const useParsingEvents = (
                 .filter((i) => i.team?.project_gitlab_path?.split('/').pop() && i?.corrector?.id !== me?.id) // i.comment
             .map((slot: any) => ({
                     id: slot.id,
-                    name: `⬇️ ${slot.team?.project_gitlab_path?.split('/').pop()}`,
+                    name: slot.team?.project_gitlab_path?.split('/').pop(),
                     start: dayjs(slot["begin_at"]).toDate(),
                     end: dayjs(slot["begin_at"]).add(slot.scale.duration, 's').toDate(),
                     color:
@@ -97,7 +98,8 @@ const useParsingEvents = (
                     scale_team: slot,
                     slots_data: null,
                     type: "defances",
-                    isDraggable: false
+                    isDraggable: false,
+                    icon: 'Shield'
                 }));
             console.log("defancesList", defancesList);
             const locationsList = locations.flatMap((event: any) =>
@@ -108,6 +110,7 @@ const useParsingEvents = (
                     end: event.end_at ? dayjs(event.end_at).toDate() : dayjs(new Date()).toDate(), 
                     color: "success",
                     scale_team: "locations",
+                    icon: 'Computer'
                 }))
             ) || [];
             setEvents([...eventList, ...slotsList, ...defancesList, ...locationsList]);

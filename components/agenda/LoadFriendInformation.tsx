@@ -8,22 +8,22 @@ import { CorrectorGrades, CorrectorLanguages } from "./CorrectorLanguages";
 import Badge from "../bootstrap/Badge";
 // import HeatMapBasic from "./HeatMap"
 
-export const LoadFriendInformation = ({ color, languages, setColor, setLanguages, setLoad, isPined, token = null, id }: { setLoad: any, isPined: boolean; token: any; id: number }) => {
+export const LoadFriendInformation = ({ removeFriendHandler,isIdInSuccess ,update,me, setLoad, isPined, token = null, id }: { setLoad: any, isPined: boolean; token: any; id: number }) => {
     const [isFetched, setIsFetched] = useState(false);
     const [data, setData] = useState();
     const friendsData = useFriendsData({ id, token, setLoad });
     const [isOpen, setIsOpen] = useState(false);
+    const { cursus_id } = me.cursus_users.filter(i => i.end_at == null)[0];
 
     useEffect(() => {
-        if (isFetched || !isOpen || color || languages) return;
+        if (isFetched || !isOpen) return;
         setIsFetched(true);
         friendsData()
             .then(data => {
                 setIsFetched(false);
                 setData(data);
-                setColor(data?.coalitions[data.coalitions.length - 1]?.color)
             })
-    }, [color, languages, isFetched, isOpen]);
+    }, [ isFetched, isOpen]);
 
     return (
         <CardBody>
@@ -36,19 +36,27 @@ export const LoadFriendInformation = ({ color, languages, setColor, setLanguages
                 opacity: .1
             }} src={data?.coalitions[data.coalitions.length - 1]?.image_url} />}
             <Button
+                style={{ margin: '15px 15px 10px 0' }}
+                className='h4'
+                icon={update ? "Refresh" : isIdInSuccess ? "Done" : "Close"}
+                color={isIdInSuccess ? "success" : "light"}
+                isDisable={update}
+                onClick={() => removeFriendHandler(id)}
+            />
+            <Button
                 icon="Link"
                 style={{ margin: '15px 15px 10px 0' }}
                 color="success"
                 onClick={() => window.open(`https://profile.intra.42.fr/users/${id | 0}`, '_blank')}
             >
             </Button>
-            {!data && isOpen && <Button
+            <Button
                 icon="Download"
                 style={{ margin: '15px 15px 10px 0', zIndex: 10, position: 'absolute' }}
                 color="light"
                 onClick={() => setIsOpen(!isOpen)}
-            >Fetch
-            </Button>}
+            >
+            </Button>
             {
                 (!data && isOpen)
                     ? <div className="d-flex justify-content-center m-3">
@@ -62,9 +70,9 @@ export const LoadFriendInformation = ({ color, languages, setColor, setLanguages
                         <Badge
                             style={{ marginRight: 10 }}
                             color='warning'
-                        >{data?.user?.wallet}</Badge>
+                        >{data?.user?.wallet} ₳</Badge>
                         {data?.user && <CorrectorGrades id={id} users={[data?.user]} />}
-                        {data?.user && setLanguages(<CorrectorLanguages id={id} users={[data?.user]} />)}
+                        {data?.user && <CorrectorLanguages id={id} users={[data?.user]} />}
                         <table style={{ width: '100%' }} className="mt-4 mb-4">
                             <thead className='table table-modern'>
                                 <tr>
@@ -74,7 +82,10 @@ export const LoadFriendInformation = ({ color, languages, setColor, setLanguages
                                 </tr>
                             </thead>
                             <tbody>
-                                {data?.projects_users?.filter(i => !i["validated?"]).map((item) => (
+                                {data?.projects_users?
+                                .filter(i => !i["validated?"])
+                                .filter(i => i["cursus_ids"].includes(cursus_id))
+                                .map((item) => (
                                     <tr key={item.id}>
                                         {/* <td>{item.occurrence ? item.occurrence : null}</td> */}
                                         <td>{item.project.name}</td>

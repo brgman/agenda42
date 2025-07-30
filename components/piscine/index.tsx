@@ -108,7 +108,7 @@ const Piscine: FC<any> = ({ token }: any) => {
         })
     };
 
-    const isMyPiscine = () => (me.pool_month == monthSort && me.pool_year == yearSort); 
+    const isMyPiscine = () => (me.pool_month == monthSort && me.pool_year == yearSort);
 
     useEffect(() => {
         getMyPiscine();
@@ -144,8 +144,11 @@ const Piscine: FC<any> = ({ token }: any) => {
             <OffCanvasBody tag="form" className="p-4" >
                 {
                     (refresh && !users.length)
-                        ? <Spinner random />
-                        : <>
+                        ? (
+                            <div className="d-flex justify-content-center mt-5">
+                                <Spinner color="primary" random />
+                            </div>
+                        ) : <>
                             {
                                 users.map(user => {
                                     const isIdInSuccess = success && success.includes(user.id);

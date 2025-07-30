@@ -31,6 +31,7 @@ const useSwitchEvents = (events: any, allEvents: any, setEventsActive: any) => {
         prohibition_of_cancellation: event.prohibition_of_cancellation,
         themes: event.themes,
         scale_team: "event",
+        icon: events.some(e => event.id === e.id) ? "PushPin" : null,
       })) || [];
       setEventsActive([
         ...eventList,

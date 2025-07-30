@@ -9,7 +9,6 @@
 	flex: 1 auto;
 	flex-direction: column;
 	transition: $transition-base;
-	height: calc(100vh - 78px);
 
 	@include aside-close-wrapper {
 		@include media-breakpoint-down(map-get($aside, mobile-breakpoint)) {
@@ -34,13 +33,14 @@
 	}
 
 	// If before aside
-	.aside ~ & {
+	.aside~& {
 		padding-left: map.get($aside, width);
 
 		@include media-breakpoint-down(map-get($aside, mobile-breakpoint)) {
 			position: relative;
 			left: map-deep-get($aside, width);
 		}
+
 		// Mobile Status
 		@include media-breakpoint-down(map-get($aside, mobile-breakpoint)) {
 			padding-left: 0;
@@ -48,7 +48,7 @@
 	}
 
 	// Aside is fly
-	@at-root .modern-design .aside ~ & {
+	@at-root .modern-design .aside~& {
 		@include aside-modern {
 			padding-left: map.get($aside, width) + ($spacer);
 		}
@@ -57,6 +57,15 @@
 	// Right Panel
 	&.wrapper-right-panel-active {
 		width: calc(100% - #{$offcanvas-horizontal-width});
+	}
+
+	@include media-breakpoint-up(map.get($aside, mobile-breakpoint)) {
+		height: 100vh;
+	}
+
+	// Mobile hide
+	@include media-breakpoint-down(map.get($aside, mobile-breakpoint)) {
+		height: 100%;
 	}
 }
 

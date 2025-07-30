@@ -43,7 +43,7 @@ export const getLabel = (
       .endOf("week")
       .format("D MMMM")}`;
   if (viewMode === Views.WORK_WEEK)
-    return `${dayjs(date).startOf("week").add(1, "day").format("D MMM")} - ${dayjs(
+    return `${dayjs(date).startOf("week").format("D MMM")} - ${dayjs(
       date,
     )
       .endOf("week")
@@ -93,16 +93,19 @@ export const CalendarTodayButton: FC<ICalendarTodayButtonProps> = ({
         aria-label="Prev"
       />
       {/* @ts-ignore */}
-      {central ? <Button color="primary"
-        className={dayjs(date).isSame(dayjs(), 'day') ? '' : 'btn-light'}
-        onClick={() => setDate(dayjs(new Date()).toDate())}
-      >
-        Today
-      </Button> : null}
-      <Button
-        color="primary"
-        // @ts-ignore
-        onClick={() => setDate(dayjs(date).add(1, unitType).toDate())}
+      <Button 
+        color="primary" 
+        className={dayjs(date).isSame(dayjs(), viewMode == Views.AGENDA ? 'month' : 'day') ? '' : 'btn-light'}
+        onClick={() => {
+          viewMode == Views.AGENDA
+            ? setDate(dayjs().startOf('month').toDate())
+            : setDate(dayjs(new Date()).toDate())
+        }}
+        isDisable={dayjs(date).isSame(dayjs(), viewMode == Views.AGENDA ? 'month' : 'day')}
+        icon="Today"
+      />
+      {/* @ts-ignore */}
+      <Button color="primary" onClick={() => setDate(dayjs(date).add(1, unitType).toDate())}
         icon="ChevronRight"
         aria-label="Next"
       />
@@ -158,7 +161,7 @@ export const CalendarViewModeButtons: FC<ICalendarViewModeButtonsProps> = ({
               (viewMode === Views.WEEK && "Week") ||
               (viewMode === Views.WORK_WEEK && "Alternance") ||
               (viewMode === Views.DAY && "Day") ||
-              "Table"}
+              (viewMode === Views.WORK_WEEK && "Alternance") || "Table"}
           </Button>
         </DropdownToggle>
         <DropdownMenu isAlignmentEnd>

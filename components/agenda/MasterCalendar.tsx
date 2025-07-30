@@ -54,7 +54,7 @@ const MasterCalendar = ({
     const wavingList = useSelector((state: RootState) => state.friends.wavingList);
     const me = useSelector((state: RootState) => state.user.me);
     const setMyEvents = useRefreshFriends(me?.id, token, setLoad);
-    const pins = useSelector((state: RootState) => state.friends.pins);
+    // const pins = useSelector((state: RootState) => state.friends.pins);
     const todayAt8AM = dayjs().set('hour', 8).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
     const todayAt0AM = dayjs().set('hour', 0).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
     const todayAt20PM = dayjs().set('hour', 20).set('minute', 0).set('second', 0).set('millisecond', 0).toISOString();
