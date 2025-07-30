@@ -65,7 +65,7 @@
 
 	// Mobile hide
 	@include media-breakpoint-down(map.get($aside, mobile-breakpoint)) {
-		height: 100%;
+		height: calc(100vh - 48px);
 	}
 }
 
