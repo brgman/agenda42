@@ -90,7 +90,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							color= {darkModeStatus ? 'dark' : 'light'}
 							hoverShadow={'default'}
 							size={'lg'}
-							isDisable={!me.id}
+							isDisable={!me?.length}
 							onClick={() => {
 								window.open('https://github.com/brgman/agenda42/issues/new?template=bug_report.md', '_blank')
 							}}
@@ -108,7 +108,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							{...styledBtn}
 							onClick={() => setDarkModeStatus(!darkModeStatus)}
 							className='btn-only-icon'
-							isDisable={!me.id}
+							isDisable={!me?.length}
 							data-tour='dark-mode'>
 							<Icon
 								icon={darkModeStatus ? 'DarkMode' : 'LightMode'}
@@ -125,7 +125,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							{...styledBtn}
 							onClick={() => setPiscine(!piscineIsOpen)}
 							className='btn-only-icon'
-							isDisable={!me.id}
+							isDisable={!me?.length}
 						>
 							<Icon
 								icon={darkModeStatus ? 'Water' : 'Water'}
@@ -143,7 +143,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							{...styledBtn}
 							onClick={() => setWavingHand(!wavingHandIsOpen)}
 							className='btn-only-icon'
-							isDisable={!me.id}
+							isDisable={!me?.length}
 						>
 							<Icon
 								icon="WavingHand"
