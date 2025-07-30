@@ -102,48 +102,38 @@ const Friends: FC<any> = ({ token }: any) => {
                     pinSort(alphabeticSort(users, "friend_login"), pins).map((user, key) => {
                         const isIdInSuccess = success && success.includes(user.id);
                         const isPined = pins.includes(user.friend_id);
-                        const [languages, setLanguages] = useState();
-                        const [color, setColor] = useState();
                         return (
-                            <Card borderSize={1} isCompact key={user.id} style={color ? { paddingBottom: 12, backgroundColor: color, transition: "all .5s ease-in-out", } : {}} >
-                                <CardHeader style={{ borderRadius: 20, backgroundColor: 'transparent' }} >
+                            <Card borderSize={1} isCompact key={user.id} >
+                                <CardHeader style={{ borderRadius: 15 }} >
                                     <CardLabel>
-                                        <CardTitle>
-                                            <Button
-                                                style={{ marginRight: 20, marginBottom: 10 }}
-                                                className='h4'
-                                                icon={update ? "Refresh" : isIdInSuccess ? "Done" : "Close"}
-                                                color={isIdInSuccess ? "success" : "light"}
-                                                isDisable={update}
-                                                onClick={() => removeFriendHandler(user.friend_id)}
-                                            />
-                                            {languages}
-                                            <span style={{ marginRight: 10 }}>{user.friend_name}</span>
-                                            <br />
-                                            <Badge
-                                                style={{ marginRight: 10 }}
-                                                isLight={darkModeStatus ? false : true}
-                                                color='success'
-                                            >
-                                                {user.friend_login}
-                                            </Badge>
-                                            <Badge
-                                                style={{ marginRight: 10 }}
-                                                isLight={darkModeStatus ? false : true}
-                                                color='success'
-                                            >
-                                                {user?.pool_month} {user?.pool_year}
-                                            </Badge>
+                                        <CardTitle style={{ marginBottom: 10 }}>
+                                        {user.friend_name}
                                         </CardTitle>
-
+                                        <Badge
+                                            style={{ marginRight: 10 }}
+                                            isLight={darkModeStatus ? false : true}
+                                            color='success'
+                                        >
+                                            {user.friend_login}
+                                        </Badge>
+                                        <Badge
+                                            style={{ marginRight: 10 }}
+                                            isLight={darkModeStatus ? false : true}
+                                            color='success'
+                                        >
+                                            {user?.pool_month} {user?.pool_year}
+                                        </Badge>
                                     </CardLabel>
 
                                     {user?.friend_image && <Avatar className="avatar-abs" src={user?.friend_image} size={64} />}
                                 </CardHeader>
+                            
                                 <LoadFriendInformation 
-                                color={color}
-                                languages={languages}
-                                setColor={setColor} setLanguages={setLanguages} setLoad={()=> {}} isPined={isPined} token={token} id={user.friend_id} />
+                                    removeFriendHandler={removeFriendHandler}
+                                    isIdInSuccess={isIdInSuccess}
+                                    update={update}
+                                me={me}
+                                setLoad={()=> {}} isPined={isPined} token={token} id={user.friend_id} />
                                 {/* <Button
                                     style={{ position: 'absolute', top: 5, right: 5 }}
                                     className='h4'
@@ -152,6 +142,7 @@ const Friends: FC<any> = ({ token }: any) => {
                                     isDisable={me.correction_point < pointsForPinned}
                                     onClick={() => pinFriendHandler(user.friend_id)}
                                 /> */}
+                                
                             </Card>
                         )
                     })

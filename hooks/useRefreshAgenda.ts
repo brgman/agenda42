@@ -34,7 +34,7 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             dispatch(setGender(genderData));
             if (genderData.status == "NOT_FOUND")
                 return;
-            if (genderData.status == "Forbidden")
+            else if (genderData.status == "Forbidden")
                 redirect("/auth");
             const {cursus_id} = me.cursus_users.filter(i => i.end_at == null)[0];
             const { id } = me.campus.filter(i => i.active)[0];

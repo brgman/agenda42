@@ -75,9 +75,6 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 		dispatch(setModalWavingHandStatus(status));
 	}
 
-	if (!me)
-		return (null);
-
     return (
         <HeaderRight>
             <div className='row g-3'>
@@ -93,6 +90,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							color= {darkModeStatus ? 'dark' : 'light'}
 							hoverShadow={'default'}
 							size={'lg'}
+							isDisable={!me?.length}
 							onClick={() => {
 								window.open('https://github.com/brgman/agenda42/issues/new?template=bug_report.md', '_blank')
 							}}
@@ -110,6 +108,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							{...styledBtn}
 							onClick={() => setDarkModeStatus(!darkModeStatus)}
 							className='btn-only-icon'
+							isDisable={!me?.length}
 							data-tour='dark-mode'>
 							<Icon
 								icon={darkModeStatus ? 'DarkMode' : 'LightMode'}
@@ -126,6 +125,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							{...styledBtn}
 							onClick={() => setPiscine(!piscineIsOpen)}
 							className='btn-only-icon'
+							isDisable={!me?.length}
 						>
 							<Icon
 								icon={darkModeStatus ? 'Water' : 'Water'}
@@ -143,10 +143,11 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							{...styledBtn}
 							onClick={() => setWavingHand(!wavingHandIsOpen)}
 							className='btn-only-icon'
+							isDisable={!me?.length}
 						>
 							<Icon
 								icon="WavingHand"
-								color={darkModeStatus ? 'light' : 'dark'}
+								color={darkModeStatus ? 'light' : 'secondary'}
 								className='btn-icon'
 							/>
 							{wavingNotRead  != 0 && <span className='position-absolute top-15 start-85 translate-middle badge rounded-pill bg-danger'>
@@ -155,21 +156,22 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 						</Button>
 					</Popovers>
 				</div>
-				{friends?.length ? <div className='col-auto'>
+				<div className='col-auto'>
 					<Popovers trigger='hover' desc='Friends'>
 						<Button
 							// eslint-disable-next-line react/jsx-props-no-spreading
 							{...styledBtn}
 							onClick={() => setFriends(!friendsIsOpen)}
+							isDisable={!friends?.length}
 							className='btn-only-icon'>
 							<Icon
 								icon={darkModeStatus ? 'Group' : 'Group'}
-								color={darkModeStatus ? 'light' : 'dark'}
+								color={darkModeStatus ? 'light' : 'info'}
 								className='btn-icon'
 							/>
 						</Button>
 					</Popovers>
-				</div> : null}
+				</div>
 				
                 {afterChildren}
             </div>
