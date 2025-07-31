@@ -19,7 +19,7 @@ const Logo42 = () => {
         >
             <img
                 style={{
-                    marginRight: 15,
+                    marginRight: 10,
                     width: 42,
                     filter: !darkModeStatus ? "brightness(1) invert(1)" : "none"
                 }}

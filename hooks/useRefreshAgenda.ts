@@ -13,6 +13,7 @@ import { setAllEvents, setEvents, setExams, setLocations } from "../store/slices
 import { setUnitType } from "../store/slices/calendarSlice";
 import ThemeContext from "../context/themeContext";
 import { redirect } from "next/navigation";
+import router from "next/router";
 
 export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
     const { viewModeStatus } = useContext(ThemeContext);
@@ -35,7 +36,7 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             if (genderData.status == "NOT_FOUND")
                 return;
             else if (genderData.status == "Forbidden")
-                redirect("/auth");
+                router.push("/auth");
             const {cursus_id} = me.cursus_users.filter(i => i.end_at == null)[0];
             const { id } = me.campus.filter(i => i.active)[0];
             const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}`, {
