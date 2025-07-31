@@ -34,13 +34,14 @@ function getMonths() {
     ];
 }
 
-const PiscineSelect = ({ monthSort, yearSort, setYear, setMonth, setUsers, setPage, setMaxPage }: any) => {
+const PiscineSelect = ({ isLoading, monthSort, yearSort, setYear, setMonth, setUsers, setPage, setMaxPage }: any) => {
     return (
         <div style={{ margin: 20, display: 'flex', justifyContent: 'start' }}>
             <Dropdown direction="down">
                 <DropdownToggle>
                     <Button style={{ borderRadius: '1rem 0 0 1rem' }}
                         color="light"
+                        isDisable={isLoading}
                     >
                         {monthSort}
                     </Button>
@@ -50,6 +51,7 @@ const PiscineSelect = ({ monthSort, yearSort, setYear, setMonth, setUsers, setPa
                         <DropdownItem>
                             <Button style={{ borderRadius: '0 1rem 1rem 0' }}
                                 color="link"
+                                isDisable={isLoading}
                                 onClick={() => {
                                     setUsers([]);
                                     setMonth(item);
@@ -68,6 +70,7 @@ const PiscineSelect = ({ monthSort, yearSort, setYear, setMonth, setUsers, setPa
                 <DropdownToggle>
                     <Button style={{ borderRadius: '0 1rem 1rem 0' }}
                         color="light"
+                        isDisable={isLoading}
                     >
                         {yearSort}
                     </Button>
@@ -77,6 +80,7 @@ const PiscineSelect = ({ monthSort, yearSort, setYear, setMonth, setUsers, setPa
                         <DropdownItem>
                             <Button
                                 color="link"
+                                isDisable={isLoading}
                                 onClick={() => {
                                     setUsers([]);
                                     setYear(item);
