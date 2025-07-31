@@ -8,7 +8,7 @@ const DashboardHeader = () => {
     return (
         <Header>
             <HeaderLeft>
-                {process.env.NODE_ENV == 'production' ? <Logo42 /> : "Hello world!" }
+                <Logo42 />
             </HeaderLeft>
             <CommonHeaderRight afterChildren={<CommonHeaderChat />} />
         </Header>
