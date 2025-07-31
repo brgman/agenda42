@@ -140,7 +140,7 @@ const Piscine: FC<any> = ({ token }: any) => {
                     </Badge>
                 </OffCanvasTitle>
             </OffCanvasHeader>
-            <PiscineSelect yearSort={yearSort} monthSort={monthSort} setMonth={setMonth} setYear={setYear} setUsers={setUsers} setPage={setPage} setMaxPage={setMaxPage} />
+            <PiscineSelect isLoading={refresh && !users.length} yearSort={yearSort} monthSort={monthSort} setMonth={setMonth} setYear={setYear} setUsers={setUsers} setPage={setPage} setMaxPage={setMaxPage} />
             <OffCanvasBody tag="form" className="p-4" >
                 {
                     (refresh && !users.length)
