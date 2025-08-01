@@ -407,7 +407,7 @@ export async function getServerSideProps({ req, locale, res }: any) {
       client_id: process.env.CLIENT_ID as string,
       redirect_uri: process.env.API_URI as string,
       response_type: "code",
-      scope: "public projects profile",
+      scope: "public projects",
     }).toString();
 
   if (!token) {
