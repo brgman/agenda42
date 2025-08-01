@@ -114,8 +114,16 @@ const MasterCalendar = ({
                         zIndex: 100
                     }
                     : {}
-                }>
-                <Button icon='Refresh' color={darkModeStatus ? 'dark' : 'light'} onClick={refreshHandler} />
+            }>
+                <CardActions>
+                    <CalendarTodayButton
+                        unitType={unitType}
+                        date={date}
+                        setDate={setDate}
+                        viewMode={viewMode}
+                        central
+                    />
+                </CardActions>
                 <Popovers
                     desc={
                         <DatePicker
@@ -131,20 +139,12 @@ const MasterCalendar = ({
                 >
                     <Button color={darkModeStatus ? 'dark' : 'light'} >{calendarDateLabel}</Button>
                 </Popovers>
-                <CardActions>
-                    <CalendarTodayButton
-                        unitType={unitType}
-                        date={date}
-                        setDate={setDate}
-                        viewMode={viewMode}
-                        central
-                    />
-                </CardActions>
+                <Button icon='Refresh' color={darkModeStatus ? 'dark' : 'light'} onClick={refreshHandler} />
                 <div className="switch_events">
                     <Button
                         style={{ minWidth: 50 }}
                         icon="CalendarToday"
-                        color={switchEvents == "all" ? 'primary' : darkModeStatus? 'dark': 'light' }
+                        color={switchEvents == "all" ? 'primary' : darkModeStatus ? 'dark' : 'light'}
                         onClick={() => {
                             dispatch(setSwitchEvents("all"))
                             setMyEvents();
@@ -156,7 +156,7 @@ const MasterCalendar = ({
                             : <Button
                                 style={{ minWidth: 50 }}
                                 icon="FilterAlt"
-                                color={switchEvents == "my" ? 'primary' : darkModeStatus ? 'dark': 'light' }
+                                color={switchEvents == "my" ? 'primary' : darkModeStatus ? 'dark' : 'light'}
                                 onClick={() => dispatch(setSwitchEvents("my"))}
                             >{switchEvents == "my" ? getName(me) : null}</Button>
                     }

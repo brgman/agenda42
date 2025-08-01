@@ -181,14 +181,13 @@ const Index: NextPage = ({ token, me }: any) => {
     end: any,
     // isSelected: boolean,
   ) => {
-    const isActiveEvent = start <= now && end >= now;
     const isPastEvent = end < now;
-    const color = isActiveEvent ? "success" : event.color;
+    const color = event.scale_team == 'locations' ? "success" : event.color;
 
     return {
       className: classNames({
         [`bg-l${darkModeStatus ? "o25" : "10"}-${color} text-${color}`]: color,
-        "border border-success": isActiveEvent,
+        [`border ${event.scale_team == 'locations' ? 'border-none' : `border-${color}`}`]: color,
         [`bg-l${darkModeStatus ? "o25" : "10"}-${darkModeStatus ? "light" : "dark"} text-${color}`]: isPastEvent && (event.scale_team !== 'locations'),
         "isDraggable": event.isDraggable && !isPastEvent,
         "nonDraggable": !event.isDraggable || isPastEvent,
