@@ -11,6 +11,7 @@ import { RootState } from "../../store";
 import { getRandomProtection } from "../../common/function/getRndomWithHash";
 
 const FocusingSelector = ({ token, setLoad, friends, me }: any) => {
+    const [isFirstLoading, setIsFirstLoading] = useState(true);
     const [selected, setSelected] = useState(me.id);
     const [list, setList] = useState<any[]>();
     const refreshFriends = useRefreshFriends(selected, token, setLoad);
@@ -18,9 +19,12 @@ const FocusingSelector = ({ token, setLoad, friends, me }: any) => {
     // const pointsForPinned = useSelector((state: RootState) => state.settings.pointsForPinned);
 
     useEffect(() => {
-        if (selected && friends)
+        if (!(selected == me.id && isFirstLoading) && friends)
+        {
             refreshFriends();
-    }, [refreshFriends, selected]);
+            setIsFirstLoading(false);
+        }
+    }, [refreshFriends, selected, isFirstLoading]);
 
     // useEffect(() => {
     //     if (pins.length && pointsForPinned <= me.correction_point) {

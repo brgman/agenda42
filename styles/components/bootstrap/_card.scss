@@ -72,6 +72,15 @@ $border-radius-child: #{$card-border-radius - $card-border-width};
 		flex: 0 0 auto;
 		width: 50%;
 	}
+
+	.flex-grid {
+		display: flex;
+		flex-wrap: wrap;
+    	gap: 20px;
+		row-gap: 0;
+    	justify-content: space-between;
+		padding-bottom: 0;
+	}
 }
 
 // Components

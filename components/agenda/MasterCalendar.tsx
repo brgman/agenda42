@@ -104,10 +104,9 @@ const MasterCalendar = ({
 
     return (
         <Card stretch className="no-mobile-grid" >
-            <CardHeader style={
+            <CardHeader className="flex-grid" style={
                 mobileDesign // TODO: test with other phones and make the classname
                     ? {
-                        padding: 20,
                         position: 'fixed',
                         background: 'rgba(255, 255, 255, 0.5)',
                         backdropFilter: 'blur(0.2rem)',
@@ -115,16 +114,8 @@ const MasterCalendar = ({
                         zIndex: 100
                     }
                     : {}
-            }>
-                <CardActions style={{ marginRight: 20 }}>
-                    <CalendarTodayButton
-                        unitType={unitType}
-                        date={date}
-                        setDate={setDate}
-                        viewMode={viewMode}
-                        central
-                    />
-                </CardActions>
+                }>
+                <Button icon='Refresh' color={darkModeStatus ? 'dark' : 'light'} onClick={refreshHandler} />
                 <Popovers
                     desc={
                         <DatePicker
@@ -140,7 +131,15 @@ const MasterCalendar = ({
                 >
                     <Button color={darkModeStatus ? 'dark' : 'light'} >{calendarDateLabel}</Button>
                 </Popovers>
-                <Button icon='Refresh' color={darkModeStatus ? 'dark' : 'light'} onClick={refreshHandler} style={{ margin: '0 20px' }} />
+                <CardActions>
+                    <CalendarTodayButton
+                        unitType={unitType}
+                        date={date}
+                        setDate={setDate}
+                        viewMode={viewMode}
+                        central
+                    />
+                </CardActions>
                 <div className="switch_events">
                     <Button
                         style={{ minWidth: 50 }}
