@@ -113,7 +113,7 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
 
     return (
         <div>
-            <h2>You are evaluated {eventItem.name.substring(2)}</h2>
+            <h2>You are evaluated {eventItem.name.substring(0)}</h2>
             <br />
             {eventItem?.scale_team.corrector !== 'invisible' ? (
                 <div className="col-12">
@@ -123,7 +123,7 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                                 <CardLabel iconColor="dark">
                                     <CardTitle>{userData.usual_full_name || '^^'}</CardTitle>
                                     <p style={{ marginTop: 5 }}>
-                                        {dayjs(eventItem?.scale_team.updated_at).format('dddd, D MMMM H:mm')}
+                                        {dayjs(eventItem?.scale_team.begin_at).format('dddd, D MMMM H:mm')}
                                     </p>
                                     <div className="df">
                                         <AddFriendButton
@@ -203,7 +203,7 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                                                 {(i == 0 && eventItem?.scale_team?.correcteds.length > 1) ? <Icon style={{ marginRight: 15 }} size="lg" color="dark" icon="Star" /> : null}
                                                 {getCorrectorName(profile.id, correctedsData, {}) || profile.login}</CardTitle>
                                             <p style={{ marginTop: 5 }}>
-                                                {i == 0 ? dayjs(eventItem?.scale_team.begin_at).format('dddd, D MMMM H:mm') : null}
+                                                {i == 0 ? dayjs(eventItem?.scale_team.updated_at).format('dddd, D MMMM H:mm') : null}
                                             </p>
                                             <div className="df">
                                                 {

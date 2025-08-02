@@ -176,13 +176,13 @@ const Index: NextPage = ({ token, me }: any) => {
   }, [eventAdding]);
 
   const eventStyleGetter = (
-    event: { color?: TColor, scale_team?: any, kind?: any, type?: any },
+    event: { color?: TColor, scale_team?: any, kind?: any, type?: any, icon?: any },
     start: any,
     end: any,
     // isSelected: boolean,
   ) => {
     const isPastEvent = end < now;
-    const color = event.scale_team == 'locations' ? "success" : event.color;
+    const color = event.scale_team == 'locations' ? "success" : (isPastEvent && event.scale_team == "event" && event.icon !== 'PushPin') ? "primary" : event.color;
 
     return {
       className: classNames({
