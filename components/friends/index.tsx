@@ -4,7 +4,7 @@ import { RootState } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { setModalFriendsStatus } from "../../store/slices/settingsReducer";
 import { alphabeticSort, delay, pinSort, userInIntraHandler } from "../../helpers/helpers";
-import Card, { CardHeader, CardLabel, CardTitle } from "../bootstrap/Card";
+import Card, { CardBody, CardHeader, CardLabel, CardTitle } from "../bootstrap/Card";
 import Avatar from "../Avatar";
 import Button from "../bootstrap/Button";
 import Badge from "../bootstrap/Badge";
@@ -127,13 +127,31 @@ const Friends: FC<any> = ({ token }: any) => {
 
                                     {user?.friend_image && <Avatar className="avatar-abs" src={user?.friend_image} size={64} />}
                                 </CardHeader>
-                            
-                                <LoadFriendInformation 
-                                    removeFriendHandler={removeFriendHandler}
-                                    isIdInSuccess={isIdInSuccess}
-                                    update={update}
-                                me={me}
-                                setLoad={()=> {}} isPined={isPined} token={token} id={user.friend_id} />
+
+                                <CardBody>
+                                    <Button
+                                        style={{ margin: '0 15px 20px 0' }}
+                                        className='h4'
+                                        icon={update ? "Refresh" : isIdInSuccess ? "Done" : "Close"}
+                                        color={isIdInSuccess ? "success" : "light"}
+                                        isDisable={update}
+                                        onClick={() => removeFriendHandler(user.friend_id)}
+                                    />
+                                    {/* <Button
+                                        icon="Link"
+                                        style={{ margin: '15px 15px 20px 0' }}
+                                        color="success"
+                                        onClick={() => window.open(`https://profile.intra.42.fr/users/${user.friend_id | 0}`, '_blank')}
+                                    ></Button> */}
+                                    <Button
+                                        icon="Link"
+                                        style={{ margin: '0 15px 20px 0', backgroundColor: '#dab2ff', color: 'white' }}
+                                        onClick={() => {
+                                            window.open(`https://portal.pfischof.com/?login=${user.friend_login}`, '_blank');
+                                        }}
+                                    >ft_portal</Button>
+                                </CardBody>
+                        
                                 {/* <Button
                                     style={{ position: 'absolute', top: 5, right: 5 }}
                                     className='h4'

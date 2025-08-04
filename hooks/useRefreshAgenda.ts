@@ -73,7 +73,7 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             res.events && dispatch(setEvents(res.events));
             res.campusEvents && dispatch(setAllEvents(res.campusEvents));
             res.locations && dispatch(setLocations(res.locations));
-            res.exams && dispatch(setExams(res.exams));
+            // res.exams && dispatch(setExams(res.exams));
 
             dispatch(setUnitType(viewModeStatus));
         } catch (error) {
