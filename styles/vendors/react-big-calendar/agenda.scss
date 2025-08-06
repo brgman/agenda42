@@ -20,6 +20,10 @@
 		border-collapse: collapse;
 		border-spacing: 0;
 
+		* {
+			border: none!important;
+		}
+
 		tbody > tr > td {
 			padding: ($spacer * 0.5) $spacer;
 			vertical-align: top;

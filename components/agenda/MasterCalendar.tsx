@@ -19,7 +19,7 @@ import Popovers from "../../components/bootstrap/Popovers";
 import Button from "../../components/bootstrap/Button";
 import Spinner from "../../components/bootstrap/Spinner";
 import { customFormats, customStyles } from "../../common/function/customStyles";
-import { MyEvent, MyWeekEvent } from "../../components/agenda/TemplatesEvent";
+import { AgendaEvent, MyEvent, MyWeekEvent } from "../../components/agenda/TemplatesEvent";
 import dayjs from "dayjs";
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import ThemeContext from "../../context/themeContext";
@@ -206,7 +206,7 @@ const MasterCalendar = ({
                         },
                         work_week: {
                             event: MyWeekEvent,
-                        },
+                        }
                     }}
                     eventPropGetter={eventStyleGetter}
                     slotPropGetter={slotPropGetter}
