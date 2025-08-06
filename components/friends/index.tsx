@@ -137,12 +137,12 @@ const Friends: FC<any> = ({ token }: any) => {
                                         isDisable={update}
                                         onClick={() => removeFriendHandler(user.friend_id)}
                                     />
-                                    {/* <Button
+                                    <Button
                                         icon="Link"
-                                        style={{ margin: '15px 15px 20px 0' }}
+                                        style={{ margin: '0 15px 20px 0' }}
                                         color="success"
                                         onClick={() => window.open(`https://profile.intra.42.fr/users/${user.friend_id | 0}`, '_blank')}
-                                    ></Button> */}
+                                    ></Button>
                                     <Button
                                         icon="Link"
                                         style={{ margin: '0 15px 20px 0', backgroundColor: '#dab2ff', color: 'white' }}

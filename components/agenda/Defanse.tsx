@@ -111,6 +111,7 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
         return <Card>Error: {error}</Card>;
     }
 
+    console.log("eventItem", eventItem);
     return (
         <div>
             <h2>You are evaluated {eventItem.name.substring(0)}</h2>
@@ -124,7 +125,6 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                                     <CardTitle>{userData.usual_full_name || '^^'}</CardTitle>
                                     <p style={{ marginTop: 5 }}>
                                         {dayjs(eventItem?.scale_team.begin_at).format('dddd, D MMMM H:mm')}
-                                        {dayjs(eventItem?.scale_team.updated_at).format('dddd, D MMMM H:mm')}
                                     </p>
                                     <div className="df">
                                         <AddFriendButton
@@ -151,7 +151,7 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                                 />
                             </CardHeader>
                         )}
-                        {eventItem?.scale_team?.feedback ? (
+                        {eventItem?.scale_team?.comment ? (
                             <CardBody>
                                 <p style={{ textAlign: 'left' }}>
                                     <b>Evaluation of the project:</b>
@@ -182,7 +182,7 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
             <div className="col-12">
                 {eventItem?.scale_team.corrector === 'invisible' ? (
                     <h3>Refresh page at {dayjs(eventItem?.scale_team.begin_at).add(-15, 'minute').format('H:mm')}</h3>
-                ) : eventItem?.scale_team?.feedback ? (
+                ) : eventItem?.scale_team?.comment ? (
                     <Card className="mb-0 bg-l10-info" shadow="sm" style={{ textAlign: 'end' }}>
                         {correctedsData.length > 0 &&
                             eventItem?.scale_team?.correcteds.map((profile: Profile, i: number) => {
@@ -204,7 +204,7 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                                                 {(i == 0 && eventItem?.scale_team?.correcteds.length > 1) ? <Icon style={{ marginRight: 15 }} size="lg" color="dark" icon="Star" /> : null}
                                                 {getCorrectorName(profile.id, correctedsData, {}) || profile.login}</CardTitle>
                                             <p style={{ marginTop: 5 }}>
-                                                {i == 0 ? dayjs(eventItem?.scale_team.begin_at).format('dddd, D MMMM H:mm') : null} //
+                                                {i == 0 ? dayjs(eventItem?.scale_team.begin_at).format('dddd, D MMMM H:mm') : null}
                                             </p>
                                             <div className="df">
                                                 {
@@ -243,7 +243,7 @@ const Defense = ({ eventItem, me, token }: DefenseProps) => {
                                 <p>{eventItem?.scale_team?.feedback}</p>
                             </CardBody>
                         ) : (
-                            <p>Wait feedback</p>
+                            <div style={{ margin: '20px 0', textAlign: "center" }}>Wait feedback</div>
                         )}
                     </Card>
                 ) : (

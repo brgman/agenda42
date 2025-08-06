@@ -19,7 +19,7 @@ export const MyWeekEvent = (data: { event: IEvent }) => {
     const { event } = data;
     return (
         <div className="row g-2">
-            <div className="col-12 h6" style={{fontSize: '0.8rem'}}>
+            <div className="col-12 h6" style={{ fontSize: '0.8rem' }}>
                 {event?.icon && <Icon icon={event?.icon} size="lg" className="me-2" />}
                 {event?.name}
             </div>
@@ -129,5 +129,37 @@ export const MyEventDay = (data: { event: IEvent }) => {
                 </small>
             </div>
         </Tooltips>
+    );
+};
+
+
+
+export const AgendaEvent = (data: { event: IEvent }) => {
+    const { event } = data;
+    console.log("AgendaEvent", event);
+    return (
+        <div className="row g-2">
+            {event?.user?.src && (
+                <div className="col-auto">
+                    <Avatar src={event?.user?.src} size={16} />
+                </div>
+            )}
+            {event?.users && (
+                <div className="col">
+                    <AvatarGroup size={16}>
+                        {event.users.map((user) => (
+                            // eslint-disable-next-line react/jsx-props-no-spreading
+                            <Avatar key={user.src} {...user} />
+                        ))}
+                    </AvatarGroup>
+                </div>
+            )}
+            <small className="col text-truncate">
+               {event?.icon && (
+                    <Icon icon={event?.icon} size="lg" className="me-2" />
+                )}
+                {event?.name}
+            </small>
+        </div>
     );
 };
