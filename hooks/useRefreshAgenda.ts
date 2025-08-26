@@ -15,7 +15,7 @@ import ThemeContext from "../context/themeContext";
 import { redirect } from "next/navigation";
 import router from "next/router";
 
-export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
+export const useRefreshAgenda = ({ me, token, setLoad, priority }: any) => {
     const { viewModeStatus } = useContext(ThemeContext);
     const dispatch = useDispatch();
     const isFetching = useRef(false); // Prevent concurrent fetches
@@ -32,7 +32,22 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             dispatch(setUser(me));
             const { cursus_id } = me.cursus_users.filter(i => i.end_at == null)[0];
             const { id } = me.campus.filter(i => i.active)[0];
-            const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}`, {
+
+            if (priority) {
+                const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}&priority=${priority}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    cache: 'no-store', // Prevent stale data if needed
+                });
+
+                const res = await response.json();
+                if (!response.ok) {
+                    throw new Error(`Failed to refresh agenda: ${res.message || response.status}`);
+                }
+                res.campusEvents && dispatch(setAllEvents(res.campusEvents));
+                setLoad(false);
+            }
+
+            const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}&priority=!${priority}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 cache: 'no-store', // Prevent stale data if needed
             });

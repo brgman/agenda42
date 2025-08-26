@@ -39,10 +39,24 @@ const createApiClient = (token: string): AxiosInstance => {
     return instance;
 };
 
+const conditionalFilter = (array: any, filter: any) => {
+    const sign = filter?.includes("!");
+    const key = filter?.startsWith('!') ? filter.slice(1) : filter;
+    console.log("filter", filter);
+    if (filter) {
+        if (sign)
+            return array.filter(i => i[0] != key);
+        else
+            return array.filter(i => i[0] == key);
+    }
+    else
+        return (array);
+}
+
 // Main Handler
 export default async function handler(req: any, res: any) {
     try {
-        const { id, campusId } = req.query;
+        const { id, campusId, priority } = req.query;
         const cookies = parseCookies(req.headers.cookie || '');
         const token = cookies.token;
 
@@ -54,17 +68,18 @@ export default async function handler(req: any, res: any) {
 
         // API endpoints
         const requests: Record<string, ApiRequest> = {
-            evaluations: () => api.get('/me/scale_teams'),
+            campusEvents: () => api.get(`/campus/${campusId}/events`, { params: { sort: '-created_at', 'page[size]': 100 } }),
             events: () => api.get(`/users/${id}/events`, { params: { sort: '-begin_at', 'page[size]': 100 } }),
+            evaluations: () => api.get('/me/scale_teams'),
             slots: () => api.get('/me/slots', { params: { 'page[size]': 100 } }),
             defancesHistory: () => api.get(`/users/${id}/scale_teams/as_corrected`),
-            campusEvents: () => api.get(`/campus/${campusId}/events`, { params: { sort: '-created_at', 'page[size]': 100 } }),
             locations: () => api.get(`/users/${id}/locations`, { params: { 'page[size]': 100 } }),
+            // locationStat: () => api.get(`/users/${id}/locations_stats`)
         };
 
         // Execute requests concurrently
         const results = await Promise.all(
-            Object.entries(requests).map(async ([key, request]) => [key, (await request()).data])
+            conditionalFilter(Object.entries(requests), priority).map(async ([key, request]) => [key, (await request()).data])
         );
 
         // Build response
