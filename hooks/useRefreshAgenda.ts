@@ -94,7 +94,6 @@ export const useRefreshAgenda = ({ me, token, setLoad, priority }: any) => {
             console.error('Refresh Agenda Error:', error);
             // Optionally rethrow or handle error for UI feedback
         } finally {
-            setLoad(false);
             isFetching.current = false;
         }
     }, [dispatch, me?.id, token, setLoad]); // Stable dependencies
