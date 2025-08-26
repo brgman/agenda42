@@ -15,7 +15,7 @@ import ThemeContext from "../context/themeContext";
 import { redirect } from "next/navigation";
 import router from "next/router";
 
-export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
+export const useRefreshAgenda = ({ me, token, setLoad, priority }: any) => {
     const { viewModeStatus } = useContext(ThemeContext);
     const dispatch = useDispatch();
     const isFetching = useRef(false); // Prevent concurrent fetches
@@ -30,34 +30,35 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
         try {
             setLoad(true);
             dispatch(setUser(me));
-            const genderData = await getGenderOfUser(me.id);
-            console.log("genderData", genderData)
-            dispatch(setGender(genderData));
-            if (genderData.status == "NOT_FOUND")
-                return;
-            else if (genderData.status == "Forbidden")
-                router.push("/auth");
-            const {cursus_id} = me.cursus_users.filter(i => i.end_at == null)[0];
+            const { cursus_id } = me.cursus_users.filter(i => i.end_at == null)[0];
             const { id } = me.campus.filter(i => i.active)[0];
-            const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}`, {
+
+            if (priority) {
+                const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}&priority=${priority}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    cache: 'no-store', // Prevent stale data if needed
+                });
+
+                const res = await response.json();
+                if (!response.ok) {
+                    throw new Error(`Failed to refresh agenda: ${res.message || response.status}`);
+                }
+                res.campusEvents && dispatch(setAllEvents(res.campusEvents));
+                setLoad(false);
+            }
+
+            const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}&priority=!${priority}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 cache: 'no-store', // Prevent stale data if needed
             });
-
+            
             const res = await response.json();
             if (!response.ok) {
                 throw new Error(`Failed to refresh agenda: ${res.message || response.status}`);
             }
-
+            
             const settingsData = await getUserSettings(me.id);
-            dispatch(setSavedSettings(settingsData));
-            const friendsData = await getUserFriends(me.id, token);
-            dispatch(setSavedFriends(friendsData));
-            const wavingHandData = await getUserWavingHand(me.id);
-            const wavingNotRead = wavingHandData?.data.filter(i => i.status === "send").length || 0;
-            dispatch(setNotReadedWaving(wavingNotRead));
-            dispatch(setSavedWavingHand(wavingHandData));
-
+            
             if (res.slots) {
                 const preparedSlots = preparationSlots(res.slots);
                 getNextEvaluation(preparedSlots, settingsData?.data?.chat_id, res.events);
@@ -74,6 +75,19 @@ export const useRefreshAgenda = ({ me, token, setLoad }: any) => {
             res.campusEvents && dispatch(setAllEvents(res.campusEvents));
             res.locations && dispatch(setLocations(res.locations));
             // res.exams && dispatch(setExams(res.exams));
+            setLoad(false);
+            
+            dispatch(setSavedSettings(settingsData));
+            const friendsData = await getUserFriends(me.id, token);
+            dispatch(setSavedFriends(friendsData));
+            const wavingHandData = await getUserWavingHand(me.id);
+            const wavingNotRead = wavingHandData?.data.filter(i => i.status === "send").length || 0;
+            dispatch(setNotReadedWaving(wavingNotRead));
+            dispatch(setSavedWavingHand(wavingHandData));
+
+            const genderData = await getGenderOfUser(me.id);
+            console.log("genderData", genderData)
+            dispatch(setGender(genderData));
 
             dispatch(setUnitType(viewModeStatus));
         } catch (error) {

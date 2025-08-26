@@ -138,7 +138,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							{...styledBtn}
 							onClick={() => setWavingHand(!wavingHandIsOpen)}
 							className='btn-only-icon'
-							isDisable={!me}
+							isDisable={!me || !wavingNotRead}
 						>
 							<Icon
 								icon="WavingHand"
@@ -157,7 +157,7 @@ const CommonHeaderRight: FC<ICommonHeaderRightProps> = ({ beforeChildren, afterC
 							// eslint-disable-next-line react/jsx-props-no-spreading
 							{...styledBtn}
 							onClick={() => setFriends(!friendsIsOpen)}
-							isDisable={!friends?.length}
+							isDisable={!friends || friends.length === 0}
 							className='btn-only-icon'>
 							<Icon
 								icon={darkModeStatus ? 'Group' : 'Group'}
