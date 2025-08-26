@@ -1,57 +1,40 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import axiosRetry from 'axios-retry';
 
 // Constants
 const BASE_URL = 'https://api.intra.42.fr/v2';
-const RETRY_CONFIG = {
-    maxRetries: 3,
-    baseDelayMs: 1000,
-    maxDelayMs: 10000,
-} as const;
 
 // Types
-interface ApiResponse<T> {
-    data: T;
-    status: number;
-}
-
 interface CookieObject {
     [key: string]: string;
 }
+
+type ApiRequest = () => Promise<AxiosResponse>;
 
 // Utility Functions
 const parseCookies = (cookieString: string): CookieObject =>
     Object.fromEntries(cookieString.split('; ').map(c => c.split('=')));
 
-const getBackoffDelay = (attempt: number, retryAfter?: string): number => {
-    if (retryAfter) return Math.min(parseInt(retryAfter) * 1000, RETRY_CONFIG.maxDelayMs);
-    const exponential = RETRY_CONFIG.baseDelayMs * Math.pow(2, attempt);
-    return Math.min(exponential + Math.random() * 100, RETRY_CONFIG.maxDelayMs);
-};
-
-export const createApiClient = (token: string) => {
+// API Client Factory
+const createApiClient = (token: string): AxiosInstance => {
     const instance = axios.create({
         baseURL: BASE_URL,
         headers: {
             Authorization: `Bearer ${token}`,
-            'Accept': 'application/json',
+            Accept: 'application/json',
         },
         timeout: 15000,
     });
 
-    instance.interceptors.response.use(
-        response => response,
-        async (error) => {
-            const config = error.config;
-            if (!config || error.response?.status !== 429 || config._retryCount >= RETRY_CONFIG.maxRetries) {
-                return Promise.reject(error);
-            }
-
-            config._retryCount = (config._retryCount || 0) + 1;
-            const delayMs = getBackoffDelay(config._retryCount, error.response?.headers['retry-after']);
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-            return instance(config);
-        }
-    );
+    // Configure axios-retry for 429 errors
+    axiosRetry(instance, {
+        retries: 3,
+        retryDelay: (retryCount, error) => {
+            const retryAfter = error.response?.headers['retry-after'];
+            return retryAfter ? Math.min(parseInt(retryAfter) * 1000, 10000) : axiosRetry.exponentialDelay(retryCount);
+        },
+        retryCondition: (error: AxiosError) => error.response?.status === 429,
+    });
 
     return instance;
 };
@@ -59,7 +42,7 @@ export const createApiClient = (token: string) => {
 // Main Handler
 export default async function handler(req: any, res: any) {
     try {
-        const { id, campusId, cursusId } = req.query;
+        const { id, campusId } = req.query;
         const cookies = parseCookies(req.headers.cookie || '');
         const token = cookies.token;
 
@@ -69,38 +52,29 @@ export default async function handler(req: any, res: any) {
 
         const api = createApiClient(token);
 
-        // API endpoints and their transformations
-        const requests = {
+        // API endpoints
+        const requests: Record<string, ApiRequest> = {
             evaluations: () => api.get('/me/scale_teams'),
-            events: () => api.get(`/users/${id}/events`, { params: { sort: '-begin_at', 'page[size]': '100' } }),
-            slots: () => api.get('/me/slots', { params: { 'page[size]': '100' } }),
-            defancesHistory: () => api.get(`/users/${id}/scale_teams/as_corrected`), 
-            campusEvents: () => api.get('/campus/' + campusId + '/events', { params: { sort: '-created_at', 'page[size]': '100' } }),
-            locations: () => api.get(`users/${id}/locations`, { params: { 'page[size]': '100' } }),
-            // exams: () => api.get(`/cursus/${cursusId}/projects`, { params: { 'filter[id]': '1320,1321,1322,1323,1324' } }),
-            // achievements: () => api.get('/achievements_users')
+            events: () => api.get(`/users/${id}/events`, { params: { sort: '-begin_at', 'page[size]': 100 } }),
+            slots: () => api.get('/me/slots', { params: { 'page[size]': 100 } }),
+            defancesHistory: () => api.get(`/users/${id}/scale_teams/as_corrected`),
+            campusEvents: () => api.get(`/campus/${campusId}/events`, { params: { sort: '-created_at', 'page[size]': 100 } }),
+            locations: () => api.get(`/users/${id}/locations`, { params: { 'page[size]': 100 } }),
         };
 
-        // Execute all requests concurrently
+        // Execute requests concurrently
         const results = await Promise.all(
-            Object.entries(requests).map(async ([key, request]) => {
-                const response = await request();
-                return [key, response.data];
-            })
+            Object.entries(requests).map(async ([key, request]) => [key, (await request()).data])
         );
 
-        // Transform results into response object
-        const responseData = Object.fromEntries([
-            ...results,
-            ['cookies', cookies]
-        ]);
+        // Build response
+        const responseData = Object.fromEntries([...results, ['cookies', cookies]]);
 
         return res.status(200).json(responseData);
-
     } catch (error) {
         const err = error as Error | AxiosError;
-        const status = err instanceof AxiosError ? (err.response?.status || 500) : 500;
-        const message = err instanceof AxiosError ? (err.response?.data?.message || err.message) : 'Internal server error';
+        const status = err instanceof AxiosError ? err.response?.status || 500 : 500;
+        const message = err instanceof AxiosError ? err.response?.data?.message || err.message : 'Internal server error';
 
         console.error('API Error:', { message, status, stack: err.stack });
         return res.status(status).json({ error: message });
