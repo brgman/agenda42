@@ -64,8 +64,8 @@ const Index: NextPage = ({ token, me }: any) => {
   const router = useRouter();
   const { notify } = router.query;
   const [loadGeneral, setLoad] = useState(true);
-  const loadAgenda = useRefreshAgenda({ me, token, setLoad, });
-  const refreshAgenda = useRefreshAgenda({ me, token, setLoad, priority: 'campusEvents' });
+  const loadAgenda = useRefreshAgenda({ me, token, setLoad, priority: 'campusEvents' });
+  const refreshAgenda = useRefreshAgenda({ me, token, setLoad, });
   const { darkModeStatus, themeStatus } = useDarkMode();
 
   const settings = useSelector((state: RootState) => state.settings.settingsLoaded);
@@ -91,8 +91,8 @@ const Index: NextPage = ({ token, me }: any) => {
   const [eventsActive, setEventsActive] = useState([]);
 
   useEffect(() => {
-    refreshAgenda();
-  }, [refreshAgenda]);
+    loadAgenda();
+  }, [loadAgenda]);
 
   useEffect(() => {
     if (viewMode == Views.AGENDA)
@@ -332,7 +332,7 @@ const Index: NextPage = ({ token, me }: any) => {
               date={date}
               setDate={setDate}
               viewMode={viewMode}
-              refreshHandler={loadAgenda}
+              refreshHandler={refreshAgenda}
               eventsActive={eventsActive}
               views={views}
               moveEvent={moveEvent}
