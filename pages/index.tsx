@@ -47,6 +47,7 @@ import Friends from "../components/friends";
 import WavingHand from "../components/waving_hand";
 import GenderModal from "../components/GenderModal";
 import { Views } from "react-big-calendar";
+import { LOADING_STATUS } from "../type/modal-type";
 
 axiosRetry(axios, {
   retries: 3,
@@ -63,7 +64,7 @@ const Index: NextPage = ({ token, me }: any) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { notify } = router.query;
-  const [loadGeneral, setLoad] = useState(true);
+  const [loadGeneral, setLoad] = useState<LOADING_STATUS>(LOADING_STATUS.LOADING);
   const loadAgenda = useRefreshAgenda({ me, token, setLoad, priority: 'campusEvents' });
   const refreshAgenda = useRefreshAgenda({ me, token, setLoad, });
   const { darkModeStatus, themeStatus } = useDarkMode();
@@ -99,7 +100,7 @@ const Index: NextPage = ({ token, me }: any) => {
       return (setDate(dayjs().startOf('month').toDate()));
     else
       return setDate(new Date());
-  }, [viewMode])
+  }, [viewMode]);
 
   useParsingEvents(eventsIntra, slotsIntra, defances, defancesHistory, me, setEvents, setEventsActive, locations);
   useSwitchEvents(events, allEvents, setEventsActive);
@@ -271,7 +272,7 @@ const Index: NextPage = ({ token, me }: any) => {
       const deletedSlotsIds = event.slots_data.map((slot: any) => slot.id);
       if (diffInMinutes < 60)
         return;
-      setLoad(true);
+      setLoad(LOADING_STATUS.LOADING);
       const res = await removeCreateSlotHandler(deletedSlotsIds, token, start, end, me.id);
       console.log("res", res);
 
@@ -294,10 +295,21 @@ const Index: NextPage = ({ token, me }: any) => {
           'danger'
         );
       }
-      setLoad(false);
+      setLoad(LOADING_STATUS.ALL_EVENT_OF_USER);
     },
     [me, originalSlotsIntra, slotsIntra]
   )
+
+  const styleOfLoading = (loadGeneral: LOADING_STATUS | undefined ): any => {
+    switch (loadGeneral) {
+      case LOADING_STATUS.LOADING:
+        return "blur(5px)";
+      case LOADING_STATUS.GENERAL_EVENT:
+        return "grayscale(100%)";
+      case LOADING_STATUS.ALL_EVENT_OF_USER:
+        return "blur(0px)"
+    }
+  }
 
   return (
     <PageWrapper>
@@ -311,8 +323,8 @@ const Index: NextPage = ({ token, me }: any) => {
       </Head>
       <Page container="fluid" className="pb-0 no-mobile-grid">
         <div className="row h-100" style={{
-          filter: loadGeneral ? "blur(5px)" : "blur(0px)",
-          pointerEvents: loadGeneral ? "none" : "auto",
+          filter: styleOfLoading(loadGeneral),
+          pointerEvents: loadGeneral !== LOADING_STATUS.ALL_EVENT_OF_USER ? "none" : "auto",
           transition: "filter .5s ease-in-out",
         }}>
           <div className="col-xl-3 small_agenda d-none d-md-none d-xl-block">

@@ -14,6 +14,7 @@ import { setUnitType } from "../store/slices/calendarSlice";
 import ThemeContext from "../context/themeContext";
 import { redirect } from "next/navigation";
 import router from "next/router";
+import { LOADING_STATUS } from "../type/modal-type";
 
 export const useRefreshAgenda = ({ me, token, setLoad, priority }: any) => {
     const { viewModeStatus } = useContext(ThemeContext);
@@ -28,7 +29,7 @@ export const useRefreshAgenda = ({ me, token, setLoad, priority }: any) => {
 
         isFetching.current = true;
         try {
-            setLoad(true);
+            setLoad(LOADING_STATUS.LOADING);
             dispatch(setUser(me));
             const { cursus_id } = me.cursus_users.filter(i => i.end_at == null)[0];
             const { id } = me.campus.filter(i => i.active)[0];
@@ -44,7 +45,7 @@ export const useRefreshAgenda = ({ me, token, setLoad, priority }: any) => {
                     throw new Error(`Failed to refresh agenda: ${res.message || response.status}`);
                 }
                 res.campusEvents && dispatch(setAllEvents(res.campusEvents));
-                setLoad(false);
+                setLoad(LOADING_STATUS.GENERAL_EVENT);
             }
 
             const response = await fetch(`/api/refresh_agenda?id=${me.id}&campusId=${id}&cursusId=${cursus_id}&priority=!${priority}`, {
@@ -75,7 +76,7 @@ export const useRefreshAgenda = ({ me, token, setLoad, priority }: any) => {
             res.campusEvents && dispatch(setAllEvents(res.campusEvents));
             res.locations && dispatch(setLocations(res.locations));
             // res.exams && dispatch(setExams(res.exams));
-            setLoad(false);
+            setLoad(LOADING_STATUS.ALL_EVENT_OF_USER);
             
             dispatch(setSavedSettings(settingsData));
             const friendsData = await getUserFriends(me.id, token);

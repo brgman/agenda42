@@ -2,6 +2,7 @@
 import { useRef, useCallback, useContext } from "react";
 import { useDispatch } from "react-redux";
 import ThemeContext from "../context/themeContext";
+import { LOADING_STATUS } from "../type/modal-type";
 
 export const useFriendsData = ({ id, token, setLoad }: any) => {
     const dispatch = useDispatch();
@@ -15,7 +16,7 @@ export const useFriendsData = ({ id, token, setLoad }: any) => {
 
         isFetching.current = true;
         try {
-            setLoad(true);
+            setLoad(LOADING_STATUS.LOADING);
 
             const response = await fetch(`/api/friends_data?id=${id | 0}`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -31,7 +32,7 @@ export const useFriendsData = ({ id, token, setLoad }: any) => {
         } catch (error) {
             console.error('Refresh Agenda Error:', error);
         } finally {
-            setLoad(false);
+            setLoad(LOADING_STATUS.ALL_EVENT_OF_USER);
             isFetching.current = false;
         }
     }, [dispatch, id, token, setLoad]); // Stable dependencies
