@@ -16,7 +16,7 @@ const useSwitchEvents = (events: any, allEvents: any, setEventsActive: any) => {
 
   useEffect(() => {
     if (switchEvents == 'all' && allEvents) {
-      const eventList = allEvents.filter(event => !isException(event)).map((event: any) => ({
+      const eventList = allEvents.map((event: any) => ({
         id: event.id,
         name: event.name ?? event.id,
         start: dayjs(event["begin_at"]).toDate(),
