@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { setEvals } from "../store/slices/evalsSlice";
 import { setOriginalSlots, setSlots, setDefances, setDefancesHistory } from "../store/slices/slotsSlice";
 import { setEvents, setLocations } from "../store/slices/eventsSlice";
+import { LOADING_STATUS } from "../type/modal-type";
 
 export const useRefreshFriends = (id: any, token: any, setLoad: any) => {
     const dispatch = useDispatch();
@@ -20,7 +21,7 @@ export const useRefreshFriends = (id: any, token: any, setLoad: any) => {
 
         isFetching.current = true;
         try {
-            setLoad(true);
+            setLoad(LOADING_STATUS.LOADING);
 
             const response = await fetch(`/api/friends_mode?id=${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -52,7 +53,7 @@ export const useRefreshFriends = (id: any, token: any, setLoad: any) => {
             console.error('Refresh Agenda Error:', error);
             // Optionally rethrow or handle error for UI feedback
         } finally {
-            setLoad(false);
+            setLoad(LOADING_STATUS.ALL_EVENT_OF_USER);
             isFetching.current = false;
         }
     }, [dispatch, id, token, setLoad]); // Stable dependencies
