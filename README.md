@@ -7,7 +7,6 @@
 The project is built on [**Next.js 14.0.4**](https://github.com/vercel/next.js) with [**TypeScript**](https://github.com/microsoft/TypeScript) for robust server-side rendering and static site generation, powered by [**React 18.2.0**](https://github.com/facebook/react) for dynamic UI components. It prominently features [**react-big-calendar**](https://github.com/jquense/react-big-calendar) for advanced calendar functionality, with state management handled by [**Redux**](https://github.com/reduxjs/redux) for efficient, scalable data flow.
 
 
-
 ## 🛠️ [Instructions for deploying the application locally](https://github.com/brgman/agenda42/blob/master/DEVELOPMENT.md)
 
 ## 🌟 Guide for Contributing, via Fork 🌟
