@@ -5,5 +5,5 @@ RUN npm install
 RUN npm install env-cmd
 COPY . .
 RUN npm run build
-EXPOSE 4200
+EXPOSE 3000
 CMD ["npm", "run", "start"]
