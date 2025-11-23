@@ -6,7 +6,7 @@
     "dev": "npx env-cmd -f \".env.local\" next dev",
     "build": "next build",
     "export": "next build && next export",
-    "start": "next start -p 3000",
+    "start": "next start -p 4200",
     "lint": "next lint",
     "lint:scss": "stylelint **/*.scss",
     "lint:fix-scss": "stylelint --fix **/*.scss",

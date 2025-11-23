@@ -1,7 +1,7 @@
 # Nom de l'image Docker
 IMAGE_NAME=agenda-app
 DEV_PORT = 3002
-PORT = 3000
+PORT = 4200
 
 # Lancement en mode développement avec .env.local
 # TODO: for dev he take port 3002 from package.json
