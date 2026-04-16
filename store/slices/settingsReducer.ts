@@ -14,7 +14,7 @@ interface UserState {
 
 const initialState: UserState = {
     pointsForPinned: 0,
-    slotRemoveMod: true,
+    slotRemoveMod: false,
     settingsIsOpen: false,
     friendsIsOpen: false,
     piscineIsOpen: false,
